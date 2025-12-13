@@ -1,0 +1,48 @@
+# =============================================================================
+# CUSTOMER PORTAL .HTACCESS
+# =============================================================================
+# Handles routing for customer portal (app directory)
+# Works with both local development and production environments
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Redirect to dashboard if accessing /app/ directly
+    RewriteRule ^$ dashboard.php [L]
+    
+    # If the request is for an existing file, serve it directly
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    
+    # If the request is for an existing directory, serve it
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    
+    # If .php file exists for the request, serve it
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^([^/]+)/?$ $1.php [L]
+</IfModule>
+
+# Prevent directory listing
+Options -Indexes
+
+# Set default charset
+AddDefaultCharset UTF-8
+
+# Protect sensitive files
+<FilesMatch "\.(env|log|ini)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>

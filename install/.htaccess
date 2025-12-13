@@ -1,0 +1,49 @@
+# =============================================================================
+# INSTALLATION WIZARD .HTACCESS
+# =============================================================================
+# This file prevents access to the installation wizard after setup is complete
+# Works with both local development and production environments
+#
+# Access Control Logic:
+# 1. Fresh Installation (no lock file): Allow all access
+# 2. Installation Complete (lock file exists):
+#    - Non-localhost: Return 403 Forbidden
+#    - Localhost (127.0.0.1, ::1): Allow through to wizard controller
+#      (The wizard controller will then redirect to main app)
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Don't set RewriteBase - let it be determined dynamically
+    
+    # Redirect to index.php if accessing /install/ directly
+    RewriteRule ^$ index.php [L]
+    
+    # If the request is for an existing file, serve it directly
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    
+    # If the request is for an existing directory, serve it
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+</IfModule>
+
+# Prevent directory listing
+Options -Indexes
+
+# Deny access to sensitive files
+<FilesMatch "\.(md|json|log)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Set proper MIME types
+<IfModule mod_mime.c>
+    AddType text/css .css
+    AddType application/javascript .js
+</IfModule>

@@ -1,0 +1,88 @@
+# =============================================================================
+# PUBLIC DIRECTORY .HTACCESS
+# =============================================================================
+# Handles routing for public-facing pages
+# Works with both local development and production environments
+
+# Allow access to this directory
+<IfModule mod_authz_core.c>
+    Require all granted
+</IfModule>
+
+# Set index.php as the default directory index
+DirectoryIndex index.php index.html
+
+# Disable directory browsing
+Options -Indexes
+
+# Enable URL Rewriting
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # ==========================================================================
+    # CLEAN URL ROUTING
+    # ==========================================================================
+    
+    # Handle solution detail pages: /solution/slug -> solution.php?slug=slug
+    RewriteRule ^solution/([^/]+)/?$ solution.php?slug=$1 [L,QSA]
+    
+    # Handle feature detail pages: /feature/slug -> feature.php?slug=slug
+    RewriteRule ^feature/([^/]+)/?$ feature.php?slug=$1 [L,QSA]
+    
+    # Handle case study detail pages: /case-study/slug -> case-study.php?slug=slug
+    RewriteRule ^case-study/([^/]+)/?$ case-study.php?slug=$1 [L,QSA]
+    
+    # Handle blog post detail pages: /blog/slug -> blog-post.php?slug=slug
+    RewriteRule ^blog/([^/]+)/?$ blog-post.php?slug=$1 [L,QSA]
+    
+    # Handle module detail pages: /module/slug -> module.php?slug=slug
+    RewriteRule ^module/([^/]+)/?$ module.php?slug=$1 [L,QSA]
+    
+    # ==========================================================================
+    # FILE EXTENSION HANDLING
+    # ==========================================================================
+    
+    # If the request is for an existing file, serve it directly
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    
+    # If the request is for an existing directory, serve it
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    
+    # If .php file exists for the request, serve it
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^([^/]+)/?$ $1.php [L]
+    
+    # Fallback to index.php for unmatched routes
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# =============================================================================
+# SECURITY HEADERS
+# =============================================================================
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# =============================================================================
+# PHP SETTINGS
+# =============================================================================
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 10M
+    php_value max_execution_time 300
+    php_value max_input_time 300
+</IfModule>
+
+<IfModule mod_php.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 10M
+    php_value max_execution_time 300
+    php_value max_input_time 300
+</IfModule>

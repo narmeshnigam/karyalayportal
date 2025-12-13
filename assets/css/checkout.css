@@ -1,0 +1,113 @@
+/**
+ * Checkout Page Styles
+ * This file is kept for backwards compatibility.
+ * Main checkout styles are now embedded in checkout.php for better maintainability.
+ * 
+ * If you need to use external CSS, uncomment and customize the styles below.
+ */
+
+/* Legacy support - these styles are now in checkout.php inline */
+
+/* Ensure SVG icons have proper sizing */
+.checkout-content svg,
+.checkout-hero svg {
+    flex-shrink: 0;
+}
+
+/* Additional utility classes for checkout */
+.checkout-hidden {
+    display: none !important;
+}
+
+.checkout-visible {
+    display: block !important;
+}
+
+/* Print styles for checkout confirmation */
+@media print {
+    .checkout-hero,
+    .checkout-actions,
+    .checkout-trust-badges,
+    .site-header,
+    .site-footer {
+        display: none !important;
+    }
+    
+    .checkout-content-section {
+        padding: 0 !important;
+        background: white !important;
+    }
+    
+    .checkout-summary-card,
+    .checkout-form-card {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+    }
+}
+
+/* Razorpay Payment Logo - Small icon size */
+.checkout-payment-logo {
+    width: auto !important;
+    height: 24px !important;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.checkout-payment-card {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.checkout-payment-card:hover {
+    border-color: #667eea;
+    background-color: #fafbff;
+}
+
+.checkout-payment-option input:checked + .checkout-payment-card {
+    border-color: #667eea;
+    background-color: #f0f4ff;
+}
+
+.checkout-payment-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.checkout-payment-name {
+    font-weight: 600;
+    font-size: 15px;
+    color: #1f2937;
+}
+
+.checkout-payment-desc {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* 3-column grid for city, state, postal code */
+.checkout-form-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
+    .checkout-form-grid-3 {
+        grid-template-columns: 1fr;
+    }
+    
+    .checkout-payment-logo {
+        width: 28px !important;
+        height: 28px !important;
+    }
+    
+    .checkout-payment-card {
+        padding: 14px;
+    }
+}

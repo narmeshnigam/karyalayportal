@@ -1,0 +1,39 @@
+# =============================================================================
+# ADMIN DIRECTORY .HTACCESS
+# =============================================================================
+# Handles routing for admin panel
+# Works with both local development and production environments
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Don't set RewriteBase - let it be determined dynamically
+    
+    # Redirect to dashboard if accessing /admin/ directly
+    RewriteRule ^$ dashboard.php [L]
+    
+    # If the request is for an existing file, serve it directly
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+    
+    # If the request is for an existing directory, serve it
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+    
+    # If .php file exists for the request, serve it
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^([^/]+)/?$ $1.php [L]
+</IfModule>
+
+# Prevent directory listing
+Options -Indexes
+
+# Set default charset
+AddDefaultCharset UTF-8
+
+# Security headers
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
