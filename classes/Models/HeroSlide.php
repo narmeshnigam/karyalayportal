@@ -105,13 +105,13 @@ class HeroSlide
         $stmt = $this->db->prepare(
             "INSERT INTO hero_slides (
                 id, title, highlight_line1, highlight_line2, description, subtitle,
-                image_url, link_url, link_text, know_more_url, display_order, status,
+                image_url, mobile_image_url, link_url, link_text, know_more_url, display_order, status,
                 highlight_line1_color, highlight_line2_color, description_color,
                 primary_btn_bg_color, primary_btn_text_color,
                 secondary_btn_bg_color, secondary_btn_text_color, secondary_btn_border_color
             ) VALUES (
                 :id, :title, :highlight_line1, :highlight_line2, :description, :subtitle,
-                :image_url, :link_url, :link_text, :know_more_url, :display_order, :status,
+                :image_url, :mobile_image_url, :link_url, :link_text, :know_more_url, :display_order, :status,
                 :highlight_line1_color, :highlight_line2_color, :description_color,
                 :primary_btn_bg_color, :primary_btn_text_color,
                 :secondary_btn_bg_color, :secondary_btn_text_color, :secondary_btn_border_color
@@ -126,6 +126,7 @@ class HeroSlide
             ':description' => $data['description'] ?? null,
             ':subtitle' => $data['subtitle'] ?? null,
             ':image_url' => $data['image_url'],
+            ':mobile_image_url' => $data['mobile_image_url'] ?? null,
             ':link_url' => $data['link_url'] ?? null,
             ':link_text' => $data['link_text'] ?? null,
             ':know_more_url' => $data['know_more_url'] ?? null,
@@ -157,6 +158,7 @@ class HeroSlide
                 description = :description,
                 subtitle = :subtitle,
                 image_url = :image_url,
+                mobile_image_url = :mobile_image_url,
                 link_url = :link_url,
                 link_text = :link_text,
                 know_more_url = :know_more_url,
@@ -181,6 +183,7 @@ class HeroSlide
             ':description' => $data['description'] ?? null,
             ':subtitle' => $data['subtitle'] ?? null,
             ':image_url' => $data['image_url'],
+            ':mobile_image_url' => $data['mobile_image_url'] ?? null,
             ':link_url' => $data['link_url'] ?? null,
             ':link_text' => $data['link_text'] ?? null,
             ':know_more_url' => $data['know_more_url'] ?? null,

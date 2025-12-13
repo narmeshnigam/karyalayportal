@@ -1,0 +1,793 @@
+/* Business Hub Section - Animated Feature Showcase */
+
+.business-hub-section {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px 0;
+    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+.business-hub-section .section-title {
+    text-align: center;
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-gray-900);
+    margin-bottom: var(--spacing-3);
+}
+
+.business-hub-section .section-subtitle {
+    text-align: center;
+    font-size: var(--font-size-lg);
+    color: var(--color-gray-600);
+    max-width: 600px;
+    margin: 0 auto var(--spacing-8);
+}
+
+/* Hub Container */
+.business-hub-container {
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+    height: calc(100vh - 200px);
+    min-height: 500px;
+    max-height: 700px;
+    margin: 0 auto;
+    background: transparent;
+}
+
+/* Central Logo Hub - Blue Circle with Orange Rotating Border */
+.central-hub {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 160px;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    animation: hubPulse 3s ease-in-out infinite;
+}
+
+/* Orange dashed rotating border */
+.central-hub::before {
+    content: '';
+    position: absolute;
+    width: calc(100% + 16px);
+    height: calc(100% + 16px);
+    border-radius: 50%;
+    border: 3px dashed #f59e0b;
+    animation: rotateBorder 20s linear infinite;
+}
+
+/* Inner blue circle containing the logo */
+.central-hub-inner {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 25px;
+    box-shadow: 0 0 0 8px rgba(37, 99, 235, 0.15),
+                0 0 0 16px rgba(37, 99, 235, 0.08),
+                0 20px 50px rgba(37, 99, 235, 0.3);
+    overflow: hidden;
+}
+
+.central-hub-logo-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    /* Make logo white */
+    filter: brightness(0) invert(1);
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.central-hub-text {
+    color: #ffffff;
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+
+@keyframes rotateBorder {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes hubPulse {
+    0%, 100% { 
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% { 
+        transform: translate(-50%, -50%) scale(1.03);
+    }
+}
+
+/* Wing Nodes - Main Category Circles */
+.wing-node {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 5;
+    /* Start from center - will animate out */
+    opacity: 0;
+    transform: translate(0, 0) scale(0);
+}
+
+.wing-node:hover {
+    z-index: 8;
+}
+
+/* Hover scale for each wing (must include translate to maintain position) */
+.wing-people:hover { transform: translate(-50%, -50%) scale(1.1) !important; }
+.wing-operations:hover { transform: translate(-50%, -50%) scale(1.1) !important; }
+.wing-finance:hover { transform: translate(-50%, -50%) scale(1.1) !important; }
+.wing-control:hover { transform: translate(-50%, -50%) scale(1.1) !important; }
+
+.wing-node-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: inherit;
+}
+
+/* Wing Colors - Positioned at quadrant centers */
+/* Quadrant centers: TL(25%, 25%), TR(75%, 25%), BL(25%, 75%), BR(75%, 75%) */
+.wing-people {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    color: #1e40af;
+    top: 25%;
+    left: 25%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.25);
+}
+
+.wing-operations {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #92400e;
+    top: 25%;
+    left: 75%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 10px 30px rgba(245, 158, 11, 0.25);
+}
+
+.wing-finance {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    color: #065f46;
+    top: 75%;
+    left: 25%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.25);
+}
+
+.wing-control {
+    background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+    color: #3730a3;
+    top: 75%;
+    left: 75%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.25);
+}
+
+/* Pop-out animations when visible */
+.hub-visible .wing-people {
+    animation: popOutWing 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+               dazzleBlue 4s ease-in-out 0.8s infinite;
+}
+
+.hub-visible .wing-operations {
+    animation: popOutWing 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s forwards,
+               dazzleYellow 5s ease-in-out 0.95s infinite;
+}
+
+.hub-visible .wing-finance {
+    animation: popOutWing 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards,
+               dazzleGreen 6s ease-in-out 1.1s infinite;
+}
+
+.hub-visible .wing-control {
+    animation: popOutWing 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.45s forwards,
+               dazzlePurple 5.5s ease-in-out 1.25s infinite;
+}
+
+/* Feature Labels - Positioned around category circles */
+.feature-label {
+    position: absolute;
+    font-size: clamp(0.65rem, 0.8vw, 0.8rem);
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    white-space: nowrap;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+    transition: all 0.3s ease;
+    z-index: 4;
+}
+
+/* Base animation - will be overridden by nth-child rules for staggered effect */
+.hub-visible .feature-label {
+    animation: popOutLabel 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+               labelDazzle 4s ease-in-out 1s infinite;
+}
+
+.feature-label:hover {
+    transform: translate(-50%, -50%) scale(1.1) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+    animation-play-state: paused;
+}
+
+/* Subtle bouncy dazzle animation for feature labels */
+@keyframes labelDazzle {
+    0%, 100% { 
+        transform: translate(-50%, -50%) scale(1) translateY(0);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+    20% { 
+        transform: translate(-50%, -50%) scale(1.02) translateY(-2px);
+    }
+    40% { 
+        transform: translate(-50%, -50%) scale(1.04) translateY(0);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+    }
+    60% { 
+        transform: translate(-50%, -50%) scale(1.02) translateY(2px);
+    }
+    80% { 
+        transform: translate(-50%, -50%) scale(1.01) translateY(0);
+    }
+}
+
+/* Alternate bouncy animation - slightly different rhythm */
+@keyframes labelBounce {
+    0%, 100% { 
+        transform: translate(-50%, -50%) scale(1) translateY(0);
+    }
+    30% { 
+        transform: translate(-50%, -50%) scale(1.03) translateY(-3px);
+    }
+    50% { 
+        transform: translate(-50%, -50%) scale(1.01) translateY(1px);
+    }
+    70% { 
+        transform: translate(-50%, -50%) scale(1.02) translateY(-1px);
+    }
+}
+
+/* Staggered dazzle timing for different labels - varied animations */
+.hub-visible .feature-label:nth-child(4n+1) {
+    animation: popOutLabel 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+               labelDazzle 4s ease-in-out 1s infinite;
+}
+.hub-visible .feature-label:nth-child(4n+2) {
+    animation: popOutLabel 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+               labelBounce 5s ease-in-out 1.3s infinite;
+}
+.hub-visible .feature-label:nth-child(4n+3) {
+    animation: popOutLabel 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+               labelDazzle 4.5s ease-in-out 1.6s infinite;
+}
+.hub-visible .feature-label:nth-child(4n) {
+    animation: popOutLabel 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+               labelBounce 3.5s ease-in-out 1.9s infinite;
+}
+
+/* Feature Labels by Category Color */
+.feature-people { color: #2563eb; }
+.feature-operations { color: #d97706; }
+.feature-finance { color: #059669; }
+.feature-control { color: #4f46e5; }
+
+/* Feature label links */
+a.feature-label {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+a.feature-label:hover {
+    text-decoration: underline;
+}
+
+/* Animations */
+
+/* Pop-out from center animation - unified for all wings */
+@keyframes popOutWing {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+@keyframes popOutLabel {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0);
+    }
+    70% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.08);
+    }
+    85% {
+        transform: translate(-50%, -50%) scale(0.96);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+
+
+/* Dazzle/shimmer effects for each wing */
+@keyframes dazzleBlue {
+    0%, 100% { 
+        box-shadow: 0 10px 30px rgba(59, 130, 246, 0.25);
+        filter: brightness(1);
+    }
+    50% { 
+        box-shadow: 0 15px 40px rgba(59, 130, 246, 0.4), 0 0 20px rgba(59, 130, 246, 0.2);
+        filter: brightness(1.05);
+    }
+}
+
+@keyframes dazzleYellow {
+    0%, 100% { 
+        box-shadow: 0 10px 30px rgba(245, 158, 11, 0.25);
+        filter: brightness(1);
+    }
+    50% { 
+        box-shadow: 0 15px 40px rgba(245, 158, 11, 0.4), 0 0 20px rgba(245, 158, 11, 0.2);
+        filter: brightness(1.05);
+    }
+}
+
+@keyframes dazzleGreen {
+    0%, 100% { 
+        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.25);
+        filter: brightness(1);
+    }
+    50% { 
+        box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4), 0 0 20px rgba(16, 185, 129, 0.2);
+        filter: brightness(1.05);
+    }
+}
+
+@keyframes dazzlePurple {
+    0%, 100% { 
+        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.25);
+        filter: brightness(1);
+    }
+    50% { 
+        box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4), 0 0 20px rgba(99, 102, 241, 0.2);
+        filter: brightness(1.05);
+    }
+}
+
+.wing-node:hover {
+    animation-play-state: paused;
+}
+
+/* Responsive Design */
+
+/* Large screens (1440px+) - slightly larger radius */
+@media (min-width: 1440px) {
+    .business-hub-container {
+        max-width: 1100px;
+    }
+}
+
+/* Medium-large screens (1200-1439px) */
+@media (min-width: 1200px) and (max-width: 1439px) {
+    .business-hub-container {
+        max-width: 950px;
+    }
+}
+
+/* Standard screens (1024-1199px) - default positioning works well */
+@media (min-width: 1024px) and (max-width: 1199px) {
+    .business-hub-container {
+        max-width: 850px;
+    }
+    
+    .wing-node {
+        width: 110px;
+        height: 110px;
+    }
+    
+    .feature-label {
+        font-size: 0.72rem;
+        padding: 5px 9px;
+    }
+}
+
+/* Small laptops / 13" screens (900-1023px) - tighter positioning */
+@media (min-width: 900px) and (max-width: 1023px) {
+    .business-hub-container {
+        max-width: 750px;
+        max-height: 600px;
+    }
+    
+    .central-hub {
+        width: 140px;
+        height: 140px;
+    }
+    
+    .central-hub-inner {
+        padding: 20px;
+    }
+    
+    .central-hub-text {
+        font-size: 1.2rem;
+    }
+    
+    .wing-node {
+        width: 95px;
+        height: 95px;
+    }
+    
+    .wing-node-title {
+        font-size: 0.78rem;
+    }
+    
+    .feature-label {
+        font-size: 0.68rem;
+        padding: 4px 8px;
+    }
+}
+
+/* Tablet landscape / small laptops (769-899px) */
+@media (min-width: 769px) and (max-width: 899px) {
+    .business-hub-container {
+        max-width: 680px;
+        max-height: 550px;
+    }
+    
+    .central-hub {
+        width: 130px;
+        height: 130px;
+    }
+    
+    .central-hub-inner {
+        padding: 18px;
+    }
+    
+    .central-hub-text {
+        font-size: 1.1rem;
+    }
+    
+    .wing-node {
+        width: 88px;
+        height: 88px;
+    }
+    
+    .wing-node-title {
+        font-size: 0.72rem;
+    }
+    
+    .feature-label {
+        font-size: 0.62rem;
+        padding: 3px 7px;
+    }
+}
+
+@media (max-width: 768px) {
+    .business-hub-section {
+        min-height: auto;
+        padding: 60px 0;
+    }
+    
+    .business-hub-container {
+        height: auto;
+        min-height: auto;
+        max-height: none;
+        padding: 20px;
+    }
+    
+    /* Stack layout for mobile - Glassmorphism Central Hub */
+    .central-hub {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        margin: 0 auto 25px;
+        width: 150px;
+        height: 150px;
+        animation: hubPulse 3s ease-in-out infinite;
+    }
+    
+    .central-hub::before {
+        width: calc(100% + 14px);
+        height: calc(100% + 14px);
+        border-width: 3px;
+    }
+    
+    .central-hub-inner {
+        padding: 22px;
+        /* Glassmorphism effect */
+        background: linear-gradient(135deg, rgba(30, 58, 138, 0.95) 0%, rgba(37, 99, 235, 0.9) 100%);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 
+            0 8px 32px rgba(37, 99, 235, 0.35),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    }
+    
+    .central-hub-logo-img {
+        filter: brightness(0) invert(1);
+    }
+    
+    .central-hub-text {
+        font-size: 1.2rem;
+    }
+    
+    @keyframes hubPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.03); }
+    }
+    
+    /* Connector line from hub to cards */
+    .wing-nodes-mobile {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        max-width: 92%;
+        margin: 0 auto;
+        position: relative;
+        padding-top: 10px;
+    }
+    
+    /* Vertical connector line - starts from hub, ends at last card center */
+    .wing-nodes-mobile::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: -35px;
+        height: calc(100% - 70px);
+        width: 2px;
+        background: linear-gradient(180deg, #2563eb 0%, #f59e0b 33%, #10b981 66%, #6366f1 100%);
+        transform: translateX(-50%);
+        z-index: 0;
+    }
+    
+    /* Glassmorphism Cards */
+    .wing-nodes-mobile .wing-node {
+        position: relative;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        width: 100%;
+        height: auto;
+        min-height: 130px;
+        padding: 22px 18px;
+        border-radius: 20px;
+        z-index: 1;
+        margin: 14px 0;
+        /* Glassmorphism effect */
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 
+            0 8px 32px rgba(0, 0, 0, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.4),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+        /* Initial state - hidden, will fade and slide in smoothly */
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: opacity 0.6s ease-out,
+                    transform 0.6s ease-out;
+    }
+    
+    /* Glassy color overlays for each wing */
+    .wing-nodes-mobile .wing-people {
+        background: linear-gradient(135deg, rgba(219, 234, 254, 0.85) 0%, rgba(191, 219, 254, 0.8) 100%);
+    }
+    .wing-nodes-mobile .wing-operations {
+        background: linear-gradient(135deg, rgba(254, 243, 199, 0.85) 0%, rgba(253, 230, 138, 0.8) 100%);
+    }
+    .wing-nodes-mobile .wing-finance {
+        background: linear-gradient(135deg, rgba(209, 250, 229, 0.85) 0%, rgba(167, 243, 208, 0.8) 100%);
+    }
+    .wing-nodes-mobile .wing-control {
+        background: linear-gradient(135deg, rgba(224, 231, 255, 0.85) 0%, rgba(199, 210, 254, 0.8) 100%);
+    }
+    
+    .wing-nodes-mobile .wing-node .wing-node-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+    }
+    
+    /* Visible state when scrolled into view - smooth professional animation */
+    .wing-nodes-mobile .wing-node.mobile-visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    /* Hidden state when scrolled out (going back up) */
+    .wing-nodes-mobile .wing-node.mobile-hidden {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    
+    /* Staggered animation delays for cascade effect - slightly longer for smoother feel */
+    .wing-nodes-mobile .wing-node:nth-child(1) { transition-delay: 0s; }
+    .wing-nodes-mobile .wing-node:nth-child(2) { transition-delay: 0.15s; }
+    .wing-nodes-mobile .wing-node:nth-child(3) { transition-delay: 0.3s; }
+    .wing-nodes-mobile .wing-node:nth-child(4) { transition-delay: 0.45s; }
+    
+    /* Connector dots on each card */
+    .wing-nodes-mobile .wing-node::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: -8px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        transform: translateX(-50%);
+        z-index: 2;
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    
+    .wing-nodes-mobile .wing-people::before {
+        background: linear-gradient(135deg, #3b82f6, #1e40af);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+    
+    .wing-nodes-mobile .wing-operations::before {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+    }
+    
+    .wing-nodes-mobile .wing-finance::before {
+        background: linear-gradient(135deg, #10b981, #059669);
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+    
+    .wing-nodes-mobile .wing-control::before {
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+    
+    /* Subtle glow effect on visible cards - professional and understated */
+    .wing-nodes-mobile .wing-node.mobile-visible::before {
+        animation: dotGlow 3s ease-in-out infinite;
+    }
+    
+    @keyframes dotGlow {
+        0%, 100% { 
+            transform: translateX(-50%) scale(1);
+            opacity: 1;
+        }
+        50% { 
+            transform: translateX(-50%) scale(1.05);
+            opacity: 0.85;
+        }
+    }
+    
+    .feature-label {
+        display: none;
+    }
+    
+    /* Feature tags - 3 per row, equal width, glassmorphism */
+    .wing-features-mobile {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-top: 14px;
+        width: 100%;
+    }
+    
+    .wing-features-mobile span,
+    .wing-features-mobile a {
+        font-size: 0.75rem;
+        padding: 8px 6px;
+        /* Glassmorphism effect */
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 12px;
+        text-decoration: none;
+        color: inherit;
+        font-weight: 600;
+        text-align: center;
+        box-shadow: 
+            0 2px 8px rgba(0, 0, 0, 0.06),
+            inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        transition: all 0.2s ease;
+    }
+    
+    .wing-features-mobile a:hover {
+        background: rgba(255, 255, 255, 0.75);
+        transform: translateY(-1px);
+        box-shadow: 
+            0 4px 12px rgba(0, 0, 0, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+    
+    .wing-node-title-link {
+        text-decoration: none;
+        color: inherit;
+    }
+}
+
+/* Empty state */
+.business-hub-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--color-gray-500);
+}
+
+/* Wing node as link */
+a.wing-node {
+    text-decoration: none;
+    color: inherit;
+}
+
+@media (max-width: 480px) {
+    .wing-nodes-mobile {
+        max-width: 95%;
+    }
+    
+    .central-hub {
+        width: 130px;
+        height: 130px;
+        margin-bottom: 20px;
+    }
+    
+    .central-hub-inner {
+        padding: 18px;
+    }
+    
+    .central-hub-text {
+        font-size: 1rem;
+    }
+    
+    .wing-nodes-mobile .wing-node {
+        min-height: 115px;
+        padding: 18px 14px;
+    }
+    
+    .wing-nodes-mobile .wing-node .wing-node-title {
+        font-size: 0.95rem;
+    }
+    
+    .wing-features-mobile {
+        gap: 6px;
+    }
+    
+    .wing-features-mobile span,
+    .wing-features-mobile a {
+        font-size: 0.7rem;
+        padding: 6px 4px;
+    }
+}

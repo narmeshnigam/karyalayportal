@@ -30,9 +30,58 @@ require_once __DIR__ . '/../includes/template_helpers.php';
 use Karyalay\Models\HeroSlide;
 use Karyalay\Models\WhyChooseCard;
 use Karyalay\Models\Solution;
+use Karyalay\Models\ClientLogo;
 
 $heroSlideModel = new HeroSlide();
 $heroSlides = $heroSlideModel->getPublishedSlides();
+
+// Load client logos for marquee
+$clientLogos = [];
+$clientLogosError = null;
+try {
+    $clientLogoModel = new ClientLogo();
+    $clientLogos = $clientLogoModel->getPublishedLogos();
+} catch (Exception $e) {
+    // Table might not exist yet - use sample logos for demo
+    $clientLogosError = $e->getMessage();
+    error_log("Client logos not available: " . $e->getMessage());
+    
+    // For demo purposes, show sample logos when database isn't available
+    if (strpos($e->getMessage(), 'client_logos') !== false || strpos($e->getMessage(), 'connection') !== false) {
+        $clientLogos = [
+            [
+                'client_name' => 'Google',
+                'logo_url' => 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg',
+                'website_url' => 'https://google.com'
+            ],
+            [
+                'client_name' => 'Microsoft',
+                'logo_url' => 'https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg',
+                'website_url' => 'https://microsoft.com'
+            ],
+            [
+                'client_name' => 'Apple',
+                'logo_url' => 'https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg',
+                'website_url' => 'https://apple.com'
+            ],
+            [
+                'client_name' => 'Amazon',
+                'logo_url' => 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg',
+                'website_url' => 'https://amazon.com'
+            ],
+            [
+                'client_name' => 'Netflix',
+                'logo_url' => 'https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg',
+                'website_url' => 'https://netflix.com'
+            ],
+            [
+                'client_name' => 'Tesla',
+                'logo_url' => 'https://upload.wikimedia.org/wikipedia/commons/b/bb/Tesla_T_symbol.svg',
+                'website_url' => 'https://tesla.com'
+            ]
+        ];
+    }
+}
 
 // Load why choose cards
 $whyChooseModel = new WhyChooseCard();
@@ -61,8 +110,13 @@ $featuredBlogPosts = $blogPostModel->getFeatured(3);
 $page_title = 'Home';
 $page_description = get_brand_name() . ' - ' . get_footer_company_description();
 
-// Include header
-include_header($page_title, $page_description);
+// Additional CSS for this page
+$additional_css = [
+    css_url('business-hub.css')
+];
+
+// Include header with additional CSS
+include_header($page_title, $page_description, $additional_css);
 ?>
 
 <!-- Hero Slider Section -->
@@ -78,10 +132,16 @@ include_header($page_title, $page_description);
                 $primaryBtnText = $slide['primary_btn_text_color'] ?? '#FFFFFF';
                 $secondaryBtnText = $slide['secondary_btn_text_color'] ?? '#FFFFFF';
                 $secondaryBtnBorder = $slide['secondary_btn_border_color'] ?? '#FFFFFF';
+                
+                // Get mobile image (fallback to desktop if not set)
+                $desktopImage = htmlspecialchars($slide['image_url']);
+                $mobileImage = !empty($slide['mobile_image_url']) ? htmlspecialchars($slide['mobile_image_url']) : $desktopImage;
             ?>
                 <div class="hero-slide <?php echo $index === 0 ? 'active' : ''; ?>" 
-                     style="background-image: url('<?php echo htmlspecialchars($slide['image_url']); ?>')"
-                     data-index="<?php echo $index; ?>">
+                     style="background-image: url('<?php echo $desktopImage; ?>')"
+                     data-index="<?php echo $index; ?>"
+                     data-desktop-image="<?php echo $desktopImage; ?>"
+                     data-mobile-image="<?php echo $mobileImage; ?>">
                     <div class="hero-slide-content">
                         <div class="container">
                             <div class="hero-content-wrapper">
@@ -165,6 +225,58 @@ include_header($page_title, $page_description);
             </div>
         <?php endif; ?>
         
+        <?php if (!empty($clientLogos)): ?>
+        <!-- Client Logo Marquee (<?php echo count($clientLogos); ?> logos) -->
+        <div class="client-logo-marquee" aria-label="Our Clients">
+            <div class="marquee-track">
+                <div class="marquee-content">
+                    <?php foreach ($clientLogos as $logo): ?>
+                        <?php if (!empty($logo['website_url'])): ?>
+                            <a href="<?php echo htmlspecialchars($logo['website_url']); ?>" 
+                               target="_blank" 
+                               rel="noopener noreferrer"
+                               class="marquee-logo-link"
+                               title="<?php echo htmlspecialchars($logo['client_name']); ?>">
+                                <img src="<?php echo htmlspecialchars($logo['logo_url']); ?>" 
+                                     alt="<?php echo htmlspecialchars($logo['client_name']); ?>" 
+                                     class="marquee-logo" loading="lazy">
+                            </a>
+                        <?php else: ?>
+                            <span class="marquee-logo-link" title="<?php echo htmlspecialchars($logo['client_name']); ?>">
+                                <img src="<?php echo htmlspecialchars($logo['logo_url']); ?>" 
+                                     alt="<?php echo htmlspecialchars($logo['client_name']); ?>" 
+                                     class="marquee-logo" loading="lazy">
+                            </span>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </div>
+                <!-- Duplicate for seamless loop -->
+                <div class="marquee-content" aria-hidden="true">
+                    <?php foreach ($clientLogos as $logo): ?>
+                        <?php if (!empty($logo['website_url'])): ?>
+                            <a href="<?php echo htmlspecialchars($logo['website_url']); ?>" 
+                               target="_blank" 
+                               rel="noopener noreferrer"
+                               class="marquee-logo-link"
+                               tabindex="-1">
+                                <img src="<?php echo htmlspecialchars($logo['logo_url']); ?>" 
+                                     alt="" 
+                                     class="marquee-logo" loading="lazy">
+                            </a>
+                        <?php else: ?>
+                            <span class="marquee-logo-link">
+                                <img src="<?php echo htmlspecialchars($logo['logo_url']); ?>" 
+                                     alt="" 
+                                     class="marquee-logo" loading="lazy">
+                            </span>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+        <?php else: ?>
+        <!-- Client logos not available: <?php echo $clientLogosError ? htmlspecialchars($clientLogosError) : 'No published logos found'; ?> -->
+        <?php endif; ?>
 
     </div>
 </section>
@@ -172,6 +284,30 @@ include_header($page_title, $page_description);
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const slides = document.querySelectorAll('.hero-slide');
+    const MOBILE_BREAKPOINT = 768;
+    
+    // Function to update slide background based on screen size
+    function updateSlideBackgrounds() {
+        const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
+        slides.forEach(slide => {
+            const desktopImage = slide.dataset.desktopImage;
+            const mobileImage = slide.dataset.mobileImage;
+            const imageToUse = isMobile ? mobileImage : desktopImage;
+            if (imageToUse) {
+                slide.style.backgroundImage = `url('${imageToUse}')`;
+            }
+        });
+    }
+    
+    // Initial background update
+    updateSlideBackgrounds();
+    
+    // Update on resize (debounced)
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(updateSlideBackgrounds, 150);
+    });
     
     if (slides.length <= 1) return;
     
@@ -196,10 +332,15 @@ document.addEventListener('DOMContentLoaded', function() {
         showSlide(nextIndex);
     }
     
-    // Auto slide every 3.5 seconds (30% faster than 5s)
+    // Auto slide every 5 seconds
     setInterval(nextSlide, 5000);
 });
 </script>
+
+<?php 
+// Include Business Hub Section
+include __DIR__ . '/../templates/business-hub.php'; 
+?>
 
 <!-- Why Choose Section -->
 <section class="section why-choose-section bg-gray-50">

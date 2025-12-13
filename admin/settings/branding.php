@@ -76,6 +76,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
             
+            // Handle square logo upload (for hub section)
+            if (isset($_FILES['logo_square']) && $_FILES['logo_square']['error'] === UPLOAD_ERR_OK) {
+                $logo_result = $mediaUploadService->uploadFile(
+                    $_FILES['logo_square'],
+                    $_SESSION['user_id']
+                );
+                
+                if ($logo_result['success']) {
+                    $settingModel->set('logo_square', $logo_result['data']['url']);
+                } else {
+                    throw new Exception('Square logo upload failed: ' . $logo_result['error']);
+                }
+            }
+            
             // Handle favicon upload
             if (isset($_FILES['favicon']) && $_FILES['favicon']['error'] === UPLOAD_ERR_OK) {
                 $favicon_result = $mediaUploadService->uploadFile(
@@ -113,6 +127,7 @@ $settings = $settingModel->getMultiple([
     'brand_name',
     'logo_light_bg',
     'logo_dark_bg',
+    'logo_square',
     'favicon_url',
     'primary_color',
     'secondary_color'
@@ -122,6 +137,7 @@ $settings = $settingModel->getMultiple([
 $brand_name = $settings['brand_name'] ?? 'SellerPortal';
 $logo_light_bg_raw = $settings['logo_light_bg'] ?? '';
 $logo_dark_bg_raw = $settings['logo_dark_bg'] ?? '';
+$logo_square_raw = $settings['logo_square'] ?? '';
 $favicon_url_raw = $settings['favicon_url'] ?? '';
 $primary_color = $settings['primary_color'] ?? '#3b82f6';
 $secondary_color = $settings['secondary_color'] ?? '#10b981';
@@ -130,6 +146,7 @@ $secondary_color = $settings['secondary_color'] ?? '#10b981';
 $preview_base_url = get_app_base_url();
 $logo_light_bg = $logo_light_bg_raw ? $preview_base_url . $logo_light_bg_raw : '';
 $logo_dark_bg = $logo_dark_bg_raw ? $preview_base_url . $logo_dark_bg_raw : '';
+$logo_square = $logo_square_raw ? $preview_base_url . $logo_square_raw : '';
 $favicon_url = $favicon_url_raw ? $preview_base_url . $favicon_url_raw : '';
 
 // Generate CSRF token
@@ -240,6 +257,29 @@ include_admin_header('Branding Settings');
                     accept="image/jpeg,image/png,image/svg+xml"
                 >
                 <p class="form-help">Upload a logo (JPG, PNG, or SVG, max 5MB). Recommended size: 200x60px</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="logo_square" class="form-label">
+                    Square Logo (Hub Section)
+                </label>
+                <p class="form-help" style="margin-top: 0; margin-bottom: var(--spacing-3);">Used in the Business Hub section on the homepage. Should be a square logo that works well inside a circular container.</p>
+                
+                <?php if ($logo_square): ?>
+                    <div class="image-preview" style="background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); border-color: var(--color-primary);">
+                        <img src="<?php echo htmlspecialchars($logo_square); ?>" alt="Current square logo" class="preview-image" style="max-width: 80px; max-height: 80px;">
+                        <p class="preview-label" style="color: white;">Current Square Logo</p>
+                    </div>
+                <?php endif; ?>
+                
+                <input 
+                    type="file" 
+                    id="logo_square" 
+                    name="logo_square" 
+                    class="form-input-file" 
+                    accept="image/jpeg,image/png,image/svg+xml"
+                >
+                <p class="form-help">Upload a square logo (JPG, PNG, or SVG, max 5MB). Recommended size: 200x200px</p>
             </div>
             
             <div class="form-group">

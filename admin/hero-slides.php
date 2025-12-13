@@ -113,9 +113,14 @@ include_admin_header('Hero Slides');
                     <?php foreach ($slides as $slide): ?>
                         <tr>
                             <td>
-                                <img src="<?php echo htmlspecialchars($slide['image_url']); ?>" 
-                                     alt="<?php echo htmlspecialchars($slide['highlight_line1'] ?? $slide['title'] ?? 'Slide'); ?>"
-                                     class="slide-preview-thumb">
+                                <div class="slide-preview-wrapper">
+                                    <img src="<?php echo htmlspecialchars($slide['image_url']); ?>" 
+                                         alt="<?php echo htmlspecialchars($slide['highlight_line1'] ?? $slide['title'] ?? 'Slide'); ?>"
+                                         class="slide-preview-thumb">
+                                    <?php if (!empty($slide['mobile_image_url'])): ?>
+                                        <span class="mobile-badge" title="Has mobile image">📱</span>
+                                    <?php endif; ?>
+                                </div>
                             </td>
                             <td>
                                 <?php if (!empty($slide['highlight_line1']) || !empty($slide['highlight_line2'])): ?>
@@ -290,12 +295,28 @@ include_admin_header('Hero Slides');
     margin-top: var(--spacing-1);
 }
 
+.slide-preview-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
 .slide-preview-thumb {
     width: 80px;
     height: 45px;
     object-fit: cover;
     border-radius: var(--radius-md);
     border: 1px solid var(--color-gray-200);
+}
+
+.mobile-badge {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    font-size: 12px;
+    background: white;
+    border-radius: 50%;
+    padding: 2px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
 .link-preview {

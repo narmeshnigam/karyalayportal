@@ -153,6 +153,55 @@ function get_logo_dark_bg(): ?string
 }
 
 /**
+ * Get the square logo URL (for hub section)
+ * Uses static caching to avoid multiple database queries per request
+ * 
+ * @return string|null Full logo URL or null if not set
+ */
+function get_logo_square(): ?string
+{
+    static $logoUrl = null;
+    static $fetched = false;
+    
+    if ($fetched) {
+        return $logoUrl;
+    }
+    
+    $fetched = true;
+    
+    try {
+        // Check if database connection is available
+        if (!class_exists('\Karyalay\Database\Connection')) {
+            return null;
+        }
+        
+        require_once __DIR__ . '/../classes/Models/Setting.php';
+        
+        $setting = new \Karyalay\Models\Setting();
+        $value = $setting->get('logo_square');
+        
+        if (!empty($value) && trim($value) !== '') {
+            // Prepend app base URL if the path is relative
+            if (strpos($value, 'http') !== 0) {
+                $logoUrl = get_app_base_url() . $value;
+            } else {
+                $logoUrl = $value;
+            }
+        } else {
+            $logoUrl = null;
+        }
+    } catch (\Exception $e) {
+        error_log("Error retrieving logo_square: " . $e->getMessage());
+        $logoUrl = null;
+    } catch (\Throwable $e) {
+        error_log("Fatal error retrieving logo_square: " . $e->getMessage());
+        $logoUrl = null;
+    }
+    
+    return $logoUrl;
+}
+
+/**
  * Render brand logo HTML with fallback to text
  * 
  * @param string $variant 'light_bg' for light backgrounds (use dark logo), 'dark_bg' for dark backgrounds (use light logo)

@@ -52,9 +52,10 @@ $request_uri = $_SERVER['REQUEST_URI'];
 if (strpos($request_uri, '/admin/solutions') !== false || strpos($request_uri, '/admin/features') !== false || 
     strpos($request_uri, '/admin/blog') !== false || strpos($request_uri, '/admin/case-studies') !== false || 
     strpos($request_uri, '/admin/media-library') !== false || strpos($request_uri, '/admin/hero-slides') !== false ||
-    strpos($request_uri, '/admin/why-choose-cards') !== false || strpos($request_uri, '/admin/faqs') !== false ||
-    strpos($request_uri, '/admin/faq-') !== false || strpos($request_uri, '/admin/testimonials') !== false ||
-    strpos($request_uri, '/admin/about-page') !== false || strpos($request_uri, '/admin/legal') !== false) {
+    strpos($request_uri, '/admin/client-logos') !== false || strpos($request_uri, '/admin/why-choose-cards') !== false || 
+    strpos($request_uri, '/admin/faqs') !== false || strpos($request_uri, '/admin/faq-') !== false || 
+    strpos($request_uri, '/admin/testimonials') !== false || strpos($request_uri, '/admin/about-page') !== false || 
+    strpos($request_uri, '/admin/legal') !== false || strpos($request_uri, '/admin/business-hub') !== false) {
     $current_section = 'content';
 } elseif (strpos($request_uri, '/admin/plans') !== false || strpos($request_uri, '/admin/orders') !== false || strpos($request_uri, '/admin/invoices') !== false) {
     $current_section = 'billing';
@@ -96,9 +97,11 @@ $menu_sections = [
         'title' => 'Content',
         'items' => [
             ['url' => '/admin/hero-slides.php', 'label' => 'Hero Slides', 'permission' => 'hero_slides.manage', 'section' => 'content', 'match' => '/hero-slides'],
+            ['url' => '/admin/client-logos.php', 'label' => 'Client Logos', 'permission' => 'client_logos.manage', 'section' => 'content', 'match' => '/client-logos'],
             ['url' => '/admin/solutions.php', 'label' => 'Solutions', 'permission' => 'solutions.manage', 'section' => 'content', 'match' => '/solutions'],
             ['url' => '/admin/features.php', 'label' => 'Features', 'permission' => 'content.view', 'section' => 'content', 'match' => '/features'],
             ['url' => '/admin/why-choose-cards.php', 'label' => 'Why Choose', 'permission' => 'why_choose.manage', 'section' => 'content', 'match' => '/why-choose-cards'],
+            ['url' => '/admin/business-hub.php', 'label' => 'Business Hub', 'permission' => 'hero_slides.manage', 'section' => 'content', 'match' => '/business-hub'],
             ['url' => '/admin/testimonials.php', 'label' => 'Testimonials', 'permission' => 'testimonials.manage', 'section' => 'content', 'match' => '/testimonials'],
             ['url' => '/admin/blog.php', 'label' => 'Blog Posts', 'permission' => 'blog.manage', 'section' => 'content', 'match' => '/blog'],
             ['url' => '/admin/case-studies.php', 'label' => 'Case Studies', 'permission' => 'case_studies.manage', 'section' => 'content', 'match' => '/case-studies'],
