@@ -138,6 +138,9 @@ foreach ($categories as $cat) {
             ];
             
             $globalLabelIndex = 0;
+            // Create randomized animation delays for more organic feel
+            $delayPatterns = [0.6, 0.9, 0.75, 1.1, 0.8, 1.2, 0.65, 1.0, 0.85, 1.15, 0.7, 0.95];
+            
             foreach ($categories as $category): 
                 $colorClass = $category['color_class'];
                 $positions = $positionMaps[$colorClass] ?? $positionMaps['people'];
@@ -145,7 +148,8 @@ foreach ($categories as $cat) {
                 foreach ($category['nodes'] as $nodeIndex => $node):
                     $labelClass = 'label-' . htmlspecialchars($node['slug']);
                     $hasNodeLink = !empty($node['link_url']);
-                    $animDelay = 0.6 + ($globalLabelIndex * 0.1);
+                    // Use varied delay pattern instead of linear progression
+                    $animDelay = $delayPatterns[$globalLabelIndex % count($delayPatterns)];
                     
                     // Get position for this node within its category
                     $pos = $positions[$nodeIndex % count($positions)];
