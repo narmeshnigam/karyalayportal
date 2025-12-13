@@ -29,12 +29,23 @@ try {
 } catch (Exception $e) {
     error_log('Error fetching features: ' . $e->getMessage());
     $features = [];
+} catch (\Throwable $e) {
+    error_log('Fatal error fetching features: ' . $e->getMessage());
+    $features = [];
 }
 
 $page_title = 'Features';
 $page_description = 'Explore the powerful features that make Karyalay the perfect solution for your business';
 
-include_header($page_title, $page_description);
+try {
+    include_header($page_title, $page_description);
+} catch (\Throwable $e) {
+    error_log('Error including header on features page: ' . $e->getMessage());
+    // Output minimal header
+    echo '<!DOCTYPE html><html><head><title>' . htmlspecialchars($page_title) . '</title>';
+    echo '<link rel="stylesheet" href="' . htmlspecialchars(get_base_url()) . '/../assets/css/main.css">';
+    echo '</head><body><div class="page-wrapper"><main class="main-content">';
+}
 ?>
 
 <!-- Hero Section -->
@@ -81,14 +92,25 @@ include_header($page_title, $page_description);
                             
                             <?php if (!empty($feature['benefits']) && is_array($feature['benefits'])): ?>
                                 <ul class="feature-item-benefits">
-                                    <?php foreach (array_slice($feature['benefits'], 0, 3) as $benefit): ?>
+                                    <?php 
+                                    try {
+                                        $benefitsToShow = array_slice($feature['benefits'], 0, 3);
+                                        foreach ($benefitsToShow as $benefit): 
+                                            if (!empty($benefit) && is_string($benefit)):
+                                    ?>
                                         <li>
                                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                             </svg>
                                             <span><?php echo htmlspecialchars($benefit); ?></span>
                                         </li>
-                                    <?php endforeach; ?>
+                                    <?php 
+                                            endif;
+                                        endforeach;
+                                    } catch (\Throwable $e) {
+                                        error_log('Error rendering benefits: ' . $e->getMessage());
+                                    }
+                                    ?>
                                 </ul>
                             <?php endif; ?>
                             
@@ -109,10 +131,22 @@ include_header($page_title, $page_description);
 
 <!-- CTA Section -->
 <?php
-$cta_title = "Ready to Experience These Features?";
-$cta_subtitle = "Get started with Karyalay today and unlock all these powerful capabilities for your business";
-$cta_source = "features-page";
-include __DIR__ . '/../templates/cta-form.php';
+try {
+    $cta_title = "Ready to Experience These Features?";
+    $cta_subtitle = "Get started with Karyalay today and unlock all these powerful capabilities for your business";
+    $cta_source = "features-page";
+    include __DIR__ . '/../templates/cta-form.php';
+} catch (\Throwable $e) {
+    error_log('Error rendering CTA form on features page: ' . $e->getMessage());
+    // Render a simple fallback CTA
+    echo '<section class="cta-section" style="padding: 4rem 0; background: #1e293b; color: white; text-align: center;">';
+    echo '<div class="container">';
+    echo '<h2 style="margin-bottom: 1rem;">Ready to Experience These Features?</h2>';
+    echo '<p style="margin-bottom: 2rem;">Get started today and unlock all these powerful capabilities for your business</p>';
+    echo '<a href="' . htmlspecialchars(get_base_url()) . '/register.php" class="btn btn-primary" style="display: inline-block; padding: 0.75rem 2rem; background: #667eea; color: white; text-decoration: none; border-radius: 0.5rem;">Get Started</a>';
+    echo '</div>';
+    echo '</section>';
+}
 ?>
 
 <style>
@@ -349,4 +383,12 @@ include __DIR__ . '/../templates/cta-form.php';
 }
 </style>
 
-<?php include_footer(); ?>
+<?php 
+try {
+    include_footer();
+} catch (\Throwable $e) {
+    error_log('Error including footer on features page: ' . $e->getMessage());
+    // Output minimal footer
+    echo '</main></div></body></html>';
+}
+?>
