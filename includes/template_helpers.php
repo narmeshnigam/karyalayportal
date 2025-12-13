@@ -13,15 +13,23 @@
 function get_brand_name(): string
 {
     static $brandName = null;
+    static $attempted = false;
     
     // Return cached value if already retrieved
-    if ($brandName !== null) {
-        return $brandName;
+    if ($attempted) {
+        return $brandName ?? 'SellerPortal';
     }
     
+    $attempted = true;
     $fallback = 'SellerPortal';
     
     try {
+        // Check if database connection is available
+        if (!class_exists('\Karyalay\Database\Connection')) {
+            $brandName = $fallback;
+            return $brandName;
+        }
+        
         require_once __DIR__ . '/../classes/Models/Setting.php';
         
         $setting = new \Karyalay\Models\Setting();
@@ -36,6 +44,10 @@ function get_brand_name(): string
     } catch (\Exception $e) {
         // Log the error and return fallback
         error_log("Error retrieving brand name: " . $e->getMessage());
+        $brandName = $fallback;
+    } catch (\Throwable $e) {
+        // Catch any other errors (including PDO errors)
+        error_log("Fatal error retrieving brand name: " . $e->getMessage());
         $brandName = $fallback;
     }
     
@@ -57,7 +69,14 @@ function get_logo_light_bg(): ?string
         return $logoUrl;
     }
     
+    $fetched = true;
+    
     try {
+        // Check if database connection is available
+        if (!class_exists('\Karyalay\Database\Connection')) {
+            return null;
+        }
+        
         require_once __DIR__ . '/../classes/Models/Setting.php';
         
         $setting = new \Karyalay\Models\Setting();
@@ -73,10 +92,12 @@ function get_logo_light_bg(): ?string
         } else {
             $logoUrl = null;
         }
-        $fetched = true;
     } catch (\Exception $e) {
         error_log("Error retrieving logo_light_bg: " . $e->getMessage());
-        $fetched = true;
+        $logoUrl = null;
+    } catch (\Throwable $e) {
+        error_log("Fatal error retrieving logo_light_bg: " . $e->getMessage());
+        $logoUrl = null;
     }
     
     return $logoUrl;
@@ -97,7 +118,14 @@ function get_logo_dark_bg(): ?string
         return $logoUrl;
     }
     
+    $fetched = true;
+    
     try {
+        // Check if database connection is available
+        if (!class_exists('\Karyalay\Database\Connection')) {
+            return null;
+        }
+        
         require_once __DIR__ . '/../classes/Models/Setting.php';
         
         $setting = new \Karyalay\Models\Setting();
@@ -113,10 +141,12 @@ function get_logo_dark_bg(): ?string
         } else {
             $logoUrl = null;
         }
-        $fetched = true;
     } catch (\Exception $e) {
         error_log("Error retrieving logo_dark_bg: " . $e->getMessage());
-        $fetched = true;
+        $logoUrl = null;
+    } catch (\Throwable $e) {
+        error_log("Fatal error retrieving logo_dark_bg: " . $e->getMessage());
+        $logoUrl = null;
     }
     
     return $logoUrl;
@@ -1441,15 +1471,23 @@ function get_phone_input_config_json(): string
 function get_footer_company_description(): string
 {
     static $description = null;
+    static $attempted = false;
     
     // Return cached value if already retrieved
-    if ($description !== null) {
-        return $description;
+    if ($attempted) {
+        return $description ?? 'Comprehensive business management system designed to streamline your operations and boost productivity.';
     }
     
+    $attempted = true;
     $fallback = 'Comprehensive business management system designed to streamline your operations and boost productivity.';
     
     try {
+        // Check if database connection is available
+        if (!class_exists('\Karyalay\Database\Connection')) {
+            $description = $fallback;
+            return $description;
+        }
+        
         require_once __DIR__ . '/../classes/Models/Setting.php';
         
         $setting = new \Karyalay\Models\Setting();
@@ -1465,6 +1503,9 @@ function get_footer_company_description(): string
         // Log the error and return fallback
         error_log("Error retrieving footer company description: " . $e->getMessage());
         $description = $fallback;
+    } catch (\Throwable $e) {
+        error_log("Fatal error retrieving footer company description: " . $e->getMessage());
+        $description = $fallback;
     }
     
     return $description;
@@ -1479,15 +1520,23 @@ function get_footer_company_description(): string
 function get_footer_copyright_text(): string
 {
     static $copyrightText = null;
+    static $attempted = false;
     
     // Return cached value if already retrieved
-    if ($copyrightText !== null) {
-        return $copyrightText;
+    if ($attempted) {
+        return $copyrightText ?? 'All rights reserved.';
     }
     
+    $attempted = true;
     $fallback = 'All rights reserved.';
     
     try {
+        // Check if database connection is available
+        if (!class_exists('\Karyalay\Database\Connection')) {
+            $copyrightText = $fallback;
+            return $copyrightText;
+        }
+        
         require_once __DIR__ . '/../classes/Models/Setting.php';
         
         $setting = new \Karyalay\Models\Setting();
@@ -1502,6 +1551,9 @@ function get_footer_copyright_text(): string
     } catch (\Exception $e) {
         // Log the error and return fallback
         error_log("Error retrieving footer copyright text: " . $e->getMessage());
+        $copyrightText = $fallback;
+    } catch (\Throwable $e) {
+        error_log("Fatal error retrieving footer copyright text: " . $e->getMessage());
         $copyrightText = $fallback;
     }
     

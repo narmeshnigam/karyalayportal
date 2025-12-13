@@ -9,8 +9,16 @@
  * - $cta_source: Source identifier for tracking (default: current page)
  */
 
+// Safely get brand name with fallback
+try {
+    $brandName = get_brand_name();
+} catch (\Throwable $e) {
+    error_log("CTA Form: Error getting brand name - " . $e->getMessage());
+    $brandName = 'SellerPortal';
+}
+
 $cta_title = $cta_title ?? "Ready to Transform Your Business?";
-$cta_subtitle = $cta_subtitle ?? "Get in touch with us today and discover how " . get_brand_name() . " can streamline your operations";
+$cta_subtitle = $cta_subtitle ?? "Get in touch with us today and discover how " . $brandName . " can streamline your operations";
 $cta_source = $cta_source ?? ($_SERVER['REQUEST_URI'] ?? 'unknown');
 ?>
 
@@ -61,13 +69,21 @@ $cta_source = $cta_source ?? ($_SERVER['REQUEST_URI'] ?? 'unknown');
                     </div>
                     
                     <div class="cta-form-group">
-                        <?php echo render_phone_input([
-                            'id' => 'cta-phone',
-                            'name' => 'phone',
-                            'value' => '',
-                            'required' => false,
-                            'class' => 'cta-phone-wrapper',
-                        ]); ?>
+                        <?php 
+                        try {
+                            echo render_phone_input([
+                                'id' => 'cta-phone',
+                                'name' => 'phone',
+                                'value' => '',
+                                'required' => false,
+                                'class' => 'cta-phone-wrapper',
+                            ]);
+                        } catch (\Throwable $e) {
+                            error_log("CTA Form: Error rendering phone input - " . $e->getMessage());
+                            // Fallback to simple input
+                            echo '<input type="tel" name="phone" class="cta-form-input" placeholder="Phone Number">';
+                        }
+                        ?>
                     </div>
                     
                     <div class="cta-form-group">
