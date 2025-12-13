@@ -93,6 +93,15 @@ if ($installed && $envExists) {
             }
         }
         
+        // Use EnvironmentConfigManager to resolve dual-environment credentials
+        $envConfigManager = new \Karyalay\Services\EnvironmentConfigManager();
+        $resolved = $envConfigManager->resolveCredentials();
+        
+        if ($resolved['credentials'] !== null) {
+            // Set active DB_ environment variables based on resolved credentials
+            $envConfigManager->setActiveCredentials($resolved['credentials']);
+        }
+        
         $config = require __DIR__ . '/../config/database.php';
         
         // Build DSN

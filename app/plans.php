@@ -4,7 +4,7 @@
  * Display available plans with current plan highlighted
  */
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../config/bootstrap.php';
 require_once __DIR__ . '/../includes/auth_helpers.php';
 require_once __DIR__ . '/../includes/template_helpers.php';
 

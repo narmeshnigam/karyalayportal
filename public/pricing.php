@@ -4,7 +4,7 @@
  * Pricing Page with Duration Filtering
  */
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../config/bootstrap.php';
 
 $config = require __DIR__ . '/../config/app.php';
 

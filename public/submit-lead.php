@@ -13,7 +13,7 @@ ini_set('display_errors', '0');
 ini_set('log_errors', '1');
 
 // Load Composer autoloader
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../config/bootstrap.php';
 
 // Load configuration
 $config = require __DIR__ . '/../config/app.php';

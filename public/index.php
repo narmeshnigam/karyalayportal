@@ -5,8 +5,8 @@
  * Home Page
  */
 
-// Load Composer autoloader
-require_once __DIR__ . '/../vendor/autoload.php';
+// Load bootstrap (includes autoloader, env loading, and dual-environment credential resolution)
+require_once __DIR__ . '/../config/bootstrap.php';
 
 // Load configuration
 $config = require __DIR__ . '/../config/app.php';
@@ -22,9 +22,6 @@ if ($config['debug']) {
 
 // Load authentication helpers
 require_once __DIR__ . '/../includes/auth_helpers.php';
-
-// Start secure session
-startSecureSession();
 
 // Include template helpers
 require_once __DIR__ . '/../includes/template_helpers.php';

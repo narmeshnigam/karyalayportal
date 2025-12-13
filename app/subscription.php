@@ -11,7 +11,7 @@
  */
 
 // Load Composer autoloader
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../config/bootstrap.php';
 
 // Include required files
 require_once __DIR__ . '/../includes/auth_helpers.php';
