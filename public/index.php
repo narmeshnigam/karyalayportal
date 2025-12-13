@@ -69,18 +69,75 @@ include_header($page_title, $page_description);
 <section class="hero-slider" aria-label="Hero Slider">
     <div class="hero-slider-container">
         <?php if (!empty($heroSlides)): ?>
-            <?php foreach ($heroSlides as $index => $slide): ?>
+            <?php foreach ($heroSlides as $index => $slide): 
+                // Get colors with defaults
+                $line1Color = $slide['highlight_line1_color'] ?? '#FFFFFF';
+                $line2Color = $slide['highlight_line2_color'] ?? '#FFFFFF';
+                $descColor = $slide['description_color'] ?? '#FFFFFF';
+                $primaryBtnBg = $slide['primary_btn_bg_color'] ?? '#3B82F6';
+                $primaryBtnText = $slide['primary_btn_text_color'] ?? '#FFFFFF';
+                $secondaryBtnText = $slide['secondary_btn_text_color'] ?? '#FFFFFF';
+                $secondaryBtnBorder = $slide['secondary_btn_border_color'] ?? '#FFFFFF';
+            ?>
                 <div class="hero-slide <?php echo $index === 0 ? 'active' : ''; ?>" 
                      style="background-image: url('<?php echo htmlspecialchars($slide['image_url']); ?>')"
-                     data-link="<?php echo htmlspecialchars($slide['link_url'] ?? ''); ?>">
+                     data-index="<?php echo $index; ?>">
                     <div class="hero-slide-content">
                         <div class="container">
-                            <?php if (!empty($slide['title'])): ?>
-                                <h1 class="hero-title"><?php echo htmlspecialchars($slide['title']); ?></h1>
-                            <?php endif; ?>
-                            <?php if (!empty($slide['subtitle'])): ?>
-                                <p class="hero-subtitle"><?php echo htmlspecialchars($slide['subtitle']); ?></p>
-                            <?php endif; ?>
+                            <div class="hero-content-wrapper">
+                                <div class="hero-text-content">
+                                    <?php if (!empty($slide['highlight_line1']) || !empty($slide['highlight_line2'])): ?>
+                                        <div class="hero-highlight-text">
+                                            <?php if (!empty($slide['highlight_line1'])): ?>
+                                                <h1 class="hero-highlight-line" style="color: <?php echo htmlspecialchars($line1Color); ?>">
+                                                    <?php echo htmlspecialchars($slide['highlight_line1']); ?>
+                                                </h1>
+                                            <?php endif; ?>
+                                            <?php if (!empty($slide['highlight_line2'])): ?>
+                                                <h1 class="hero-highlight-line" style="color: <?php echo htmlspecialchars($line2Color); ?>">
+                                                    <?php echo htmlspecialchars($slide['highlight_line2']); ?>
+                                                </h1>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php elseif (!empty($slide['title'])): ?>
+                                        <h1 class="hero-title" style="color: <?php echo htmlspecialchars($line1Color); ?>">
+                                            <?php echo htmlspecialchars($slide['title']); ?>
+                                        </h1>
+                                    <?php endif; ?>
+                                    
+                                    <?php if (!empty($slide['description'])): ?>
+                                        <p class="hero-description" style="color: <?php echo htmlspecialchars($descColor); ?>">
+                                            <?php echo htmlspecialchars($slide['description']); ?>
+                                        </p>
+                                    <?php elseif (!empty($slide['subtitle'])): ?>
+                                        <p class="hero-description" style="color: <?php echo htmlspecialchars($descColor); ?>">
+                                            <?php echo htmlspecialchars($slide['subtitle']); ?>
+                                        </p>
+                                    <?php endif; ?>
+                                    
+                                    <div class="hero-actions">
+                                        <a href="<?php echo get_base_url(); ?>/register.php" 
+                                           class="btn btn-hero-primary btn-lg"
+                                           style="background-color: <?php echo htmlspecialchars($primaryBtnBg); ?>; color: <?php echo htmlspecialchars($primaryBtnText); ?>; border-color: <?php echo htmlspecialchars($primaryBtnBg); ?>;">
+                                            Get Started
+                                        </a>
+                                        <?php if (!empty($slide['know_more_url'])): ?>
+                                            <a href="<?php echo htmlspecialchars($slide['know_more_url']); ?>" 
+                                               class="btn btn-hero-secondary btn-lg"
+                                               style="color: <?php echo htmlspecialchars($secondaryBtnText); ?>; border-color: <?php echo htmlspecialchars($secondaryBtnBorder); ?>;"
+                                               target="_blank">
+                                                Know More
+                                            </a>
+                                        <?php else: ?>
+                                            <a href="<?php echo get_base_url(); ?>/solutions.php" 
+                                               class="btn btn-hero-secondary btn-lg"
+                                               style="color: <?php echo htmlspecialchars($secondaryBtnText); ?>; border-color: <?php echo htmlspecialchars($secondaryBtnBorder); ?>;">
+                                                Know More
+                                            </a>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -90,95 +147,57 @@ include_header($page_title, $page_description);
             <div class="hero-slide active" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                 <div class="hero-slide-content">
                     <div class="container">
-                        <h1 class="hero-title">Transform Your Business Operations</h1>
-                        <p class="hero-subtitle"><?php echo htmlspecialchars(get_footer_company_description()); ?></p>
+                        <div class="hero-content-wrapper">
+                            <div class="hero-text-content">
+                                <div class="hero-highlight-text">
+                                    <h1 class="hero-highlight-line">Transform Your</h1>
+                                    <h1 class="hero-highlight-line">Business Today</h1>
+                                </div>
+                                <p class="hero-description"><?php echo htmlspecialchars(get_footer_company_description()); ?></p>
+                                <div class="hero-actions">
+                                    <a href="<?php echo get_base_url(); ?>/register.php" class="btn btn-hero-primary btn-lg">Get Started</a>
+                                    <a href="<?php echo get_base_url(); ?>/solutions.php" class="btn btn-hero-secondary btn-lg">Know More</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         <?php endif; ?>
         
-        <!-- Fixed CTA Buttons -->
-        <div class="hero-actions-fixed">
-            <div class="container">
-                <div class="hero-actions">
-                    <a href="<?php echo get_base_url(); ?>/register.php" class="btn btn-primary btn-lg">Get Started</a>
-                    <a href="<?php echo get_base_url(); ?>/demo.php" class="btn btn-outline btn-lg">Request Demo</a>
-                </div>
-            </div>
-        </div>
-        
-        <?php if (count($heroSlides) > 1): ?>
-            <!-- Slider Navigation -->
-            <div class="hero-slider-nav">
-                <button class="hero-slider-prev" aria-label="Previous slide">‹</button>
-                <div class="hero-slider-dots">
-                    <?php foreach ($heroSlides as $index => $slide): ?>
-                        <button class="hero-slider-dot <?php echo $index === 0 ? 'active' : ''; ?>" 
-                                data-index="<?php echo $index; ?>"
-                                aria-label="Go to slide <?php echo $index + 1; ?>"></button>
-                    <?php endforeach; ?>
-                </div>
-                <button class="hero-slider-next" aria-label="Next slide">›</button>
-            </div>
-        <?php endif; ?>
+
     </div>
 </section>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const slides = document.querySelectorAll('.hero-slide');
-    const dots = document.querySelectorAll('.hero-slider-dot');
-    const prevBtn = document.querySelector('.hero-slider-prev');
-    const nextBtn = document.querySelector('.hero-slider-next');
     
     if (slides.length <= 1) return;
     
     let currentIndex = 0;
-    let autoSlideInterval;
     
     function showSlide(index) {
-        slides.forEach((slide, i) => {
-            slide.classList.toggle('active', i === index);
+        const currentSlide = slides[currentIndex];
+        const nextSlide = slides[index];
+        
+        slides.forEach(slide => {
+            slide.classList.remove('active', 'slide-in-right', 'slide-out-left');
         });
-        dots.forEach((dot, i) => {
-            dot.classList.toggle('active', i === index);
-        });
+        
+        currentSlide.classList.add('slide-out-left');
+        nextSlide.classList.add('slide-in-right', 'active');
+        
         currentIndex = index;
     }
     
     function nextSlide() {
-        showSlide((currentIndex + 1) % slides.length);
+        const nextIndex = (currentIndex + 1) % slides.length;
+        showSlide(nextIndex);
     }
     
-    function prevSlide() {
-        showSlide((currentIndex - 1 + slides.length) % slides.length);
-    }
-    
-    function startAutoSlide() {
-        autoSlideInterval = setInterval(nextSlide, 5000);
-    }
-    
-    function stopAutoSlide() {
-        clearInterval(autoSlideInterval);
-    }
-    
-    if (prevBtn) prevBtn.addEventListener('click', () => { stopAutoSlide(); prevSlide(); startAutoSlide(); });
-    if (nextBtn) nextBtn.addEventListener('click', () => { stopAutoSlide(); nextSlide(); startAutoSlide(); });
-    
-    dots.forEach((dot, index) => {
-        dot.addEventListener('click', () => { stopAutoSlide(); showSlide(index); startAutoSlide(); });
-    });
-    
-    // Click on slide to navigate to link
-    slides.forEach(slide => {
-        slide.addEventListener('click', function(e) {
-            if (e.target.closest('.hero-actions') || e.target.closest('.hero-slider-nav')) return;
-            const link = this.dataset.link;
-            if (link) window.location.href = link;
-        });
-    });
-    
-    startAutoSlide();
+    // Auto slide every 3.5 seconds (30% faster than 5s)
+    setInterval(nextSlide, 5000);
 });
 </script>
 

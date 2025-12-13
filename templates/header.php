@@ -62,8 +62,8 @@ $app_base_url = get_app_base_url();
                             </a>
                         </li>
                         <li>
-                            <a href="<?php echo $base_url; ?>/faqs.php" class="main-nav-link <?php echo $current_page === 'faqs' ? 'active' : ''; ?>">
-                                FAQs
+                            <a href="<?php echo $base_url; ?>/industries.php" class="main-nav-link <?php echo $current_page === 'faqs' ? 'active' : ''; ?>">
+                                Industries
                             </a>
                         </li>
                     </ul>

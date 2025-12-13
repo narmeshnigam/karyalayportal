@@ -44,7 +44,7 @@ class HeroSlide
         }
 
         if (!empty($filters['search'])) {
-            $sql .= " AND (title LIKE :search OR subtitle LIKE :search)";
+            $sql .= " AND (title LIKE :search OR subtitle LIKE :search OR highlight_line1 LIKE :search OR highlight_line2 LIKE :search)";
             $params[':search'] = '%' . $filters['search'] . '%';
         }
 
@@ -75,7 +75,7 @@ class HeroSlide
         }
 
         if (!empty($filters['search'])) {
-            $sql .= " AND (title LIKE :search OR subtitle LIKE :search)";
+            $sql .= " AND (title LIKE :search OR subtitle LIKE :search OR highlight_line1 LIKE :search OR highlight_line2 LIKE :search)";
             $params[':search'] = '%' . $filters['search'] . '%';
         }
 
@@ -103,19 +103,42 @@ class HeroSlide
         $id = $this->generateUuid();
         
         $stmt = $this->db->prepare(
-            "INSERT INTO hero_slides (id, title, subtitle, image_url, link_url, link_text, display_order, status)
-             VALUES (:id, :title, :subtitle, :image_url, :link_url, :link_text, :display_order, :status)"
+            "INSERT INTO hero_slides (
+                id, title, highlight_line1, highlight_line2, description, subtitle,
+                image_url, link_url, link_text, know_more_url, display_order, status,
+                highlight_line1_color, highlight_line2_color, description_color,
+                primary_btn_bg_color, primary_btn_text_color,
+                secondary_btn_bg_color, secondary_btn_text_color, secondary_btn_border_color
+            ) VALUES (
+                :id, :title, :highlight_line1, :highlight_line2, :description, :subtitle,
+                :image_url, :link_url, :link_text, :know_more_url, :display_order, :status,
+                :highlight_line1_color, :highlight_line2_color, :description_color,
+                :primary_btn_bg_color, :primary_btn_text_color,
+                :secondary_btn_bg_color, :secondary_btn_text_color, :secondary_btn_border_color
+            )"
         );
 
         $result = $stmt->execute([
             ':id' => $id,
-            ':title' => $data['title'],
+            ':title' => $data['title'] ?? null,
+            ':highlight_line1' => $data['highlight_line1'] ?? null,
+            ':highlight_line2' => $data['highlight_line2'] ?? null,
+            ':description' => $data['description'] ?? null,
             ':subtitle' => $data['subtitle'] ?? null,
             ':image_url' => $data['image_url'],
             ':link_url' => $data['link_url'] ?? null,
             ':link_text' => $data['link_text'] ?? null,
+            ':know_more_url' => $data['know_more_url'] ?? null,
             ':display_order' => $data['display_order'] ?? 0,
-            ':status' => $data['status'] ?? 'DRAFT'
+            ':status' => $data['status'] ?? 'DRAFT',
+            ':highlight_line1_color' => $data['highlight_line1_color'] ?? '#FFFFFF',
+            ':highlight_line2_color' => $data['highlight_line2_color'] ?? '#FFFFFF',
+            ':description_color' => $data['description_color'] ?? '#FFFFFF',
+            ':primary_btn_bg_color' => $data['primary_btn_bg_color'] ?? '#3B82F6',
+            ':primary_btn_text_color' => $data['primary_btn_text_color'] ?? '#FFFFFF',
+            ':secondary_btn_bg_color' => $data['secondary_btn_bg_color'] ?? 'transparent',
+            ':secondary_btn_text_color' => $data['secondary_btn_text_color'] ?? '#FFFFFF',
+            ':secondary_btn_border_color' => $data['secondary_btn_border_color'] ?? '#FFFFFF'
         ]);
 
         return $result ? $id : null;
@@ -129,24 +152,48 @@ class HeroSlide
         $stmt = $this->db->prepare(
             "UPDATE hero_slides SET 
                 title = :title,
+                highlight_line1 = :highlight_line1,
+                highlight_line2 = :highlight_line2,
+                description = :description,
                 subtitle = :subtitle,
                 image_url = :image_url,
                 link_url = :link_url,
                 link_text = :link_text,
+                know_more_url = :know_more_url,
                 display_order = :display_order,
-                status = :status
+                status = :status,
+                highlight_line1_color = :highlight_line1_color,
+                highlight_line2_color = :highlight_line2_color,
+                description_color = :description_color,
+                primary_btn_bg_color = :primary_btn_bg_color,
+                primary_btn_text_color = :primary_btn_text_color,
+                secondary_btn_bg_color = :secondary_btn_bg_color,
+                secondary_btn_text_color = :secondary_btn_text_color,
+                secondary_btn_border_color = :secondary_btn_border_color
              WHERE id = :id"
         );
 
         return $stmt->execute([
             ':id' => $id,
-            ':title' => $data['title'],
+            ':title' => $data['title'] ?? null,
+            ':highlight_line1' => $data['highlight_line1'] ?? null,
+            ':highlight_line2' => $data['highlight_line2'] ?? null,
+            ':description' => $data['description'] ?? null,
             ':subtitle' => $data['subtitle'] ?? null,
             ':image_url' => $data['image_url'],
             ':link_url' => $data['link_url'] ?? null,
             ':link_text' => $data['link_text'] ?? null,
+            ':know_more_url' => $data['know_more_url'] ?? null,
             ':display_order' => $data['display_order'] ?? 0,
-            ':status' => $data['status'] ?? 'DRAFT'
+            ':status' => $data['status'] ?? 'DRAFT',
+            ':highlight_line1_color' => $data['highlight_line1_color'] ?? '#FFFFFF',
+            ':highlight_line2_color' => $data['highlight_line2_color'] ?? '#FFFFFF',
+            ':description_color' => $data['description_color'] ?? '#FFFFFF',
+            ':primary_btn_bg_color' => $data['primary_btn_bg_color'] ?? '#3B82F6',
+            ':primary_btn_text_color' => $data['primary_btn_text_color'] ?? '#FFFFFF',
+            ':secondary_btn_bg_color' => $data['secondary_btn_bg_color'] ?? 'transparent',
+            ':secondary_btn_text_color' => $data['secondary_btn_text_color'] ?? '#FFFFFF',
+            ':secondary_btn_border_color' => $data['secondary_btn_border_color'] ?? '#FFFFFF'
         ]);
     }
 

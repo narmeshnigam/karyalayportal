@@ -31,6 +31,9 @@
                             <li class="footer-link-item">
                                 <a href="<?php echo $base_url; ?>/case-studies.php" class="footer-link">Case Studies</a>
                             </li>
+                            <li class="footer-link-item">
+                                <a href="<?php echo $base_url; ?>/industries.php" class="footer-link">Industries</a>
+                            </li>
                         </ul>
                     </div>
 
@@ -49,6 +52,9 @@
                             </li>
                             <li class="footer-link-item">
                                 <a href="<?php echo $base_url; ?>/demo.php" class="footer-link">Request Demo</a>
+                            </li>
+                            <li class="footer-link-item">
+                                <a href="<?php echo $base_url; ?>/career.php" class="footer-link">Career</a>
                             </li>
                         </ul>
                     </div>

@@ -101,8 +101,8 @@ include_admin_header('Hero Slides');
                 <thead>
                     <tr>
                         <th>Preview</th>
-                        <th>Title</th>
-                        <th>Link</th>
+                        <th>Highlight Text</th>
+                        <th>Know More Link</th>
                         <th>Status</th>
                         <th>Order</th>
                         <th>Created</th>
@@ -114,27 +114,49 @@ include_admin_header('Hero Slides');
                         <tr>
                             <td>
                                 <img src="<?php echo htmlspecialchars($slide['image_url']); ?>" 
-                                     alt="<?php echo htmlspecialchars($slide['title']); ?>"
+                                     alt="<?php echo htmlspecialchars($slide['highlight_line1'] ?? $slide['title'] ?? 'Slide'); ?>"
                                      class="slide-preview-thumb">
                             </td>
                             <td>
-                                <div class="table-cell-primary">
-                                    <?php echo htmlspecialchars($slide['title']); ?>
-                                </div>
-                                <?php if (!empty($slide['subtitle'])): ?>
+                                <?php if (!empty($slide['highlight_line1']) || !empty($slide['highlight_line2'])): ?>
+                                    <div class="table-cell-primary">
+                                        <?php echo htmlspecialchars($slide['highlight_line1'] ?? ''); ?>
+                                    </div>
+                                    <?php if (!empty($slide['highlight_line2'])): ?>
+                                        <div class="table-cell-primary">
+                                            <?php echo htmlspecialchars($slide['highlight_line2']); ?>
+                                        </div>
+                                    <?php endif; ?>
+                                <?php elseif (!empty($slide['title'])): ?>
+                                    <div class="table-cell-primary">
+                                        <?php echo htmlspecialchars($slide['title']); ?>
+                                    </div>
+                                <?php else: ?>
+                                    <span class="text-muted">No text</span>
+                                <?php endif; ?>
+                                <?php if (!empty($slide['description'])): ?>
                                     <div class="table-cell-secondary">
-                                        <?php echo htmlspecialchars(substr($slide['subtitle'], 0, 60)); ?>
-                                        <?php echo strlen($slide['subtitle']) > 60 ? '...' : ''; ?>
+                                        <?php echo htmlspecialchars(substr($slide['description'], 0, 50)); ?>
+                                        <?php echo strlen($slide['description']) > 50 ? '...' : ''; ?>
+                                    </div>
+                                <?php elseif (!empty($slide['subtitle'])): ?>
+                                    <div class="table-cell-secondary">
+                                        <?php echo htmlspecialchars(substr($slide['subtitle'], 0, 50)); ?>
+                                        <?php echo strlen($slide['subtitle']) > 50 ? '...' : ''; ?>
                                     </div>
                                 <?php endif; ?>
                             </td>
                             <td>
-                                <?php if (!empty($slide['link_url'])): ?>
+                                <?php if (!empty($slide['know_more_url'])): ?>
+                                    <a href="<?php echo htmlspecialchars($slide['know_more_url']); ?>" target="_blank" class="link-preview">
+                                        View Link
+                                    </a>
+                                <?php elseif (!empty($slide['link_url'])): ?>
                                     <a href="<?php echo htmlspecialchars($slide['link_url']); ?>" target="_blank" class="link-preview">
                                         <?php echo htmlspecialchars($slide['link_text'] ?: 'View Link'); ?>
                                     </a>
                                 <?php else: ?>
-                                    <span class="text-muted">No link</span>
+                                    <span class="text-muted">Default</span>
                                 <?php endif; ?>
                             </td>
                             <td><?php echo get_status_badge($slide['status']); ?></td>
