@@ -1,0 +1,519 @@
+/**
+ * Industries Gallery Section - Horizontal Scroll on Sticky
+ * Full-width gallery with scroll-synced horizontal animation
+ */
+
+/* Main Section - Extended height for scroll effect */
+.sol-industries-gallery {
+    position: relative;
+    height: 250vh; /* Extended height for scroll-based horizontal movement */
+    background: transparent; /* Transparent so sticky wrapper shows through */
+}
+
+/* Sticky Wrapper - Sticks below header during scroll */
+.sol-industries-sticky-wrapper {
+    position: sticky;
+    top: 64px; /* Account for header height */
+    height: 75vh; /* Fixed 75vh height */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0a1628 0%, #1a2332 100%);
+}
+
+/* Header Section */
+.sol-industries-header {
+    padding: 2.5rem 0 1.5rem;
+    padding-left: 3rem;
+    text-align: left;
+    z-index: 2;
+}
+
+.sol-industries-title {
+    font-size: 3.5rem;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    text-transform: none;
+    color: #ffffff;
+    margin: 0 0 0.5rem;
+    line-height: 1.1;
+}
+
+.sol-industries-subtitle {
+    font-size: 1.125rem;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+}
+
+/* Scroll Container - Full width, no padding */
+.sol-industries-scroll-container {
+    flex: 1;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+/* Track - Horizontal layout */
+.sol-industries-track {
+    display: flex;
+    gap: 0;
+    will-change: transform;
+    transition: transform 0.1s linear;
+}
+
+/* Industry Card - 4:3 ratio, no gaps */
+.sol-industry-card {
+    position: relative;
+    flex-shrink: 0;
+    width: 36.36vw; /* Shows exactly 2.75 cards (100/2.75 ≈ 36.36) */
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Image */
+.sol-industry-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Black Shadow Overlay - Default state */
+.sol-industry-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.3) 0%,
+        rgba(0, 0, 0, 0.6) 100%
+    );
+    transition: background 0.4s ease;
+    z-index: 1;
+}
+
+/* Content Container */
+.sol-industry-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 2.5rem;
+    z-index: 2;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Title - White, large by default */
+.sol-industry-title {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0 0 0.5rem;
+    line-height: 1.2;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Description - Hidden by default */
+.sol-industry-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    max-width: 90%;
+}
+
+/* Read More Button - Glassy style, hidden by default */
+.sol-industry-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: fit-content;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #ffffff;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sol-industry-btn svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+.sol-industry-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: #ffffff;
+}
+
+.sol-industry-btn:hover svg {
+    transform: translateX(3px);
+}
+
+/* Hover State */
+.sol-industry-card:hover .sol-industry-image {
+    transform: scale(1.05);
+}
+
+.sol-industry-card:hover .sol-industry-overlay {
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.5) 0%,
+        rgba(0, 0, 0, 0.8) 100%
+    );
+}
+
+.sol-industry-card:hover .sol-industry-title {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+}
+
+.sol-industry-card:hover .sol-industry-description {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.sol-industry-card:hover .sol-industry-btn {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.1s;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .sol-industry-card {
+        width: 40vw; /* Shows ~2.5 cards on tablet */
+    }
+    
+    .sol-industries-header {
+        padding-left: 2rem;
+    }
+    
+    .sol-industries-title {
+        font-size: 2.75rem;
+    }
+    
+    .sol-industry-title {
+        font-size: 2rem;
+    }
+    
+    .sol-industry-card:hover .sol-industry-title {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .sol-industries-gallery {
+        height: 200vh; /* Reduced scroll area on mobile */
+    }
+    
+    .sol-industries-sticky-wrapper {
+        top: 56px; /* Smaller header on mobile */
+        height: 75vh;
+    }
+    
+    .sol-industries-header {
+        padding: 1.5rem 1rem 1rem;
+        padding-left: 1.5rem;
+    }
+    
+    .sol-industries-title {
+        font-size: 2rem;
+    }
+    
+    .sol-industries-subtitle {
+        font-size: 1rem;
+    }
+    
+    .sol-industry-card {
+        width: 60vw; /* Shows ~1.6 cards on mobile */
+    }
+    
+    .sol-industry-content {
+        padding: 1.5rem;
+    }
+    
+    .sol-industry-title {
+        font-size: 1.5rem;
+    }
+    
+    .sol-industry-card:hover .sol-industry-title {
+        font-size: 1.25rem;
+    }
+    
+    .sol-industry-description {
+        font-size: 0.875rem;
+    }
+    
+    .sol-industry-btn {
+        padding: 0.4rem 0.875rem;
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .sol-industry-card {
+        width: 85vw;
+    }
+    
+    .sol-industry-title {
+        font-size: 1.25rem;
+    }
+    
+    .sol-industry-card:hover .sol-industry-title {
+        font-size: 1.125rem;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .sol-industries-track {
+        transition: none;
+    }
+    
+    .sol-industry-card,
+    .sol-industry-image,
+    .sol-industry-overlay,
+    .sol-industry-content,
+    .sol-industry-title,
+    .sol-industry-description {
+        transition: none;
+    }
+}
+
+/* Focus state for keyboard navigation */
+.sol-industry-card:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.8);
+    outline-offset: -2px;
+}
+
+.sol-industry-card:focus .sol-industry-title {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+}
+
+.sol-industry-card:focus .sol-industry-description {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/**
+ * ERP CTA Banner Section
+ * Full-width banner with image, overlay, two-line heading, and CTA button
+ */
+
+/* Main Section */
+.sol-erp-cta-banner {
+    padding: 4rem 1.5rem;
+    background: #f8fafc;
+    /* CSS Variables with defaults */
+    --cta-banner-overlay-color: rgba(0,0,0,0.5);
+    --cta-banner-overlay-intensity: 0.5;
+    --cta-banner-heading-color: #ffffff;
+    --cta-banner-button-bg: #ffffff;
+    --cta-banner-button-text: #2563eb;
+}
+
+/* Container with max-width and rounded corners */
+.sol-erp-cta-container {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    border-radius: 16px;
+    overflow: hidden;
+    min-height: 320px;
+}
+
+/* Image Wrapper */
+.sol-erp-cta-image-wrapper {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+/* Background Image */
+.sol-erp-cta-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Dark Overlay Shadow - Uses CSS variables for dynamic color and intensity */
+.sol-erp-cta-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        var(--cta-banner-overlay-color) 0%,
+        color-mix(in srgb, var(--cta-banner-overlay-color) 70%, transparent) 50%,
+        color-mix(in srgb, var(--cta-banner-overlay-color) 40%, transparent) 100%
+    );
+    opacity: var(--cta-banner-overlay-intensity);
+    z-index: 2;
+}
+
+/* Content Container */
+.sol-erp-cta-content {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 3.5rem 4rem;
+    min-height: 320px;
+}
+
+/* Two-Line Heading - Uses CSS variable for color */
+.sol-erp-cta-heading {
+    font-size: 2.5rem;
+    font-weight: 400;
+    line-height: 1.3;
+    color: var(--cta-banner-heading-color);
+    margin: 0 0 2rem;
+    max-width: 600px;
+}
+
+.sol-erp-cta-heading span {
+    display: block;
+}
+
+/* CTA Button - Uses CSS variables for background and text color */
+.sol-erp-cta-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.875rem 1.75rem;
+    background: var(--cta-banner-button-bg);
+    color: var(--cta-banner-button-text);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 6px;
+    border: 1px solid var(--cta-banner-button-bg);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.sol-erp-cta-button:hover {
+    background: transparent;
+    color: var(--cta-banner-heading-color);
+    border-color: var(--cta-banner-heading-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.sol-erp-cta-button:focus {
+    outline: 2px solid var(--cta-banner-heading-color);
+    outline-offset: 2px;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .sol-erp-cta-banner {
+        padding: 3rem 1.25rem;
+    }
+    
+    .sol-erp-cta-container {
+        min-height: 280px;
+    }
+    
+    .sol-erp-cta-content {
+        padding: 2.5rem 3rem;
+        min-height: 280px;
+    }
+    
+    .sol-erp-cta-heading {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .sol-erp-cta-banner {
+        padding: 2.5rem 1rem;
+    }
+    
+    .sol-erp-cta-container {
+        min-height: 260px;
+        border-radius: 12px;
+    }
+    
+    .sol-erp-cta-overlay {
+        background: linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.6) 0%,
+            rgba(0, 0, 0, 0.7) 100%
+        );
+    }
+    
+    .sol-erp-cta-content {
+        padding: 2rem 1.5rem;
+        min-height: 260px;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .sol-erp-cta-heading {
+        font-size: 1.625rem;
+        margin-bottom: 1.5rem;
+        max-width: 100%;
+    }
+    
+    .sol-erp-cta-button {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.875rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .sol-erp-cta-banner {
+        padding: 2rem 0.75rem;
+    }
+    
+    .sol-erp-cta-container {
+        min-height: 240px;
+        border-radius: 10px;
+    }
+    
+    .sol-erp-cta-content {
+        padding: 1.5rem 1.25rem;
+        min-height: 240px;
+    }
+    
+    .sol-erp-cta-heading {
+        font-size: 1.375rem;
+        line-height: 1.4;
+    }
+}
+
+/* Accessibility - Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .sol-erp-cta-button {
+        transition: none;
+    }
+    
+    .sol-erp-cta-button:hover {
+        transform: none;
+    }
+}

@@ -31,28 +31,72 @@ class MediaAsset
         try {
             $id = $this->generateUuid();
 
-            $sql = "INSERT INTO media_assets (
-                id, filename, url, file_path, mime_type, size, uploaded_by
-            ) VALUES (
-                :id, :filename, :url, :file_path, :mime_type, :size, :uploaded_by
-            )";
+            // Check if file_path column exists
+            $hasFilePath = $this->columnExists('file_path');
 
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([
-                ':id' => $id,
-                ':filename' => $data['filename'],
-                ':url' => $data['url'],
-                ':file_path' => $data['file_path'] ?? null,
-                ':mime_type' => $data['mime_type'],
-                ':size' => $data['size'],
-                ':uploaded_by' => $data['uploaded_by']
-            ]);
+            if ($hasFilePath) {
+                $sql = "INSERT INTO media_assets (
+                    id, filename, url, file_path, mime_type, size, uploaded_by
+                ) VALUES (
+                    :id, :filename, :url, :file_path, :mime_type, :size, :uploaded_by
+                )";
+
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([
+                    ':id' => $id,
+                    ':filename' => $data['filename'],
+                    ':url' => $data['url'],
+                    ':file_path' => $data['file_path'] ?? null,
+                    ':mime_type' => $data['mime_type'],
+                    ':size' => $data['size'],
+                    ':uploaded_by' => $data['uploaded_by']
+                ]);
+            } else {
+                // Fallback for databases without file_path column
+                $sql = "INSERT INTO media_assets (
+                    id, filename, url, mime_type, size, uploaded_by
+                ) VALUES (
+                    :id, :filename, :url, :mime_type, :size, :uploaded_by
+                )";
+
+                $stmt = $this->db->prepare($sql);
+                $stmt->execute([
+                    ':id' => $id,
+                    ':filename' => $data['filename'],
+                    ':url' => $data['url'],
+                    ':mime_type' => $data['mime_type'],
+                    ':size' => $data['size'],
+                    ':uploaded_by' => $data['uploaded_by']
+                ]);
+            }
 
             return $this->findById($id);
         } catch (PDOException $e) {
             error_log('MediaAsset creation failed: ' . $e->getMessage());
             return false;
         }
+    }
+
+    /**
+     * Check if a column exists in the media_assets table
+     * 
+     * @param string $columnName Column name to check
+     * @return bool True if column exists
+     */
+    private function columnExists(string $columnName): bool
+    {
+        static $columns = null;
+        
+        if ($columns === null) {
+            try {
+                $stmt = $this->db->query("SHOW COLUMNS FROM media_assets");
+                $columns = array_column($stmt->fetchAll(PDO::FETCH_ASSOC), 'Field');
+            } catch (PDOException $e) {
+                $columns = [];
+            }
+        }
+        
+        return in_array($columnName, $columns);
     }
 
     /**

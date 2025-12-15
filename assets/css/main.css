@@ -266,12 +266,8 @@
 
 .marquee-track {
   display: flex;
-  width: max-content;
-  animation: marquee-scroll 15s linear infinite;
-}
-
-.marquee-track:hover {
-  animation-play-state: paused;
+  flex-shrink: 0;
+  min-width: 100%;
 }
 
 .marquee-content {
@@ -279,6 +275,12 @@
   align-items: center;
   gap: var(--spacing-12);
   padding: 0 var(--spacing-6);
+  flex-shrink: 0;
+  animation: marquee-scroll 20s linear infinite;
+}
+
+.marquee-track:hover .marquee-content {
+  animation-play-state: paused;
 }
 
 .marquee-logo-link {
@@ -319,7 +321,7 @@ a.marquee-logo-link:hover {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-50%);
+    transform: translateX(-100%);
   }
 }
 
@@ -404,15 +406,12 @@ a.marquee-logo-link:hover {
   .marquee-content {
     gap: var(--spacing-8);
     padding: 0 var(--spacing-4);
+    animation-duration: 15s;
   }
   
   .marquee-logo {
     max-height: 35px;
     max-width: 100px;
-  }
-  
-  .marquee-track {
-    animation-duration: 10s;
   }
 }
 

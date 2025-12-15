@@ -334,7 +334,29 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Auto slide every 5 seconds
     setInterval(nextSlide, 5000);
+    
+    // Initialize infinite marquee
+    initMarquee();
 });
+
+function initMarquee() {
+    const marqueeTrack = document.querySelector('.marquee-track');
+    if (!marqueeTrack) return;
+    
+    const marqueeContents = marqueeTrack.querySelectorAll('.marquee-content');
+    if (marqueeContents.length < 2) return;
+    
+    // Calculate the width of one content set
+    const contentWidth = marqueeContents[0].offsetWidth;
+    
+    // Set animation duration based on content width for consistent speed
+    const speed = 50; // pixels per second
+    const duration = contentWidth / speed;
+    
+    marqueeContents.forEach(content => {
+        content.style.animationDuration = duration + 's';
+    });
+}
 </script>
 
 <?php 

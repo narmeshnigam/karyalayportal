@@ -9,11 +9,49 @@ use PDOException;
 /**
  * Solution Model Class
  * 
- * Handles CRUD operations for solutions table
+ * Handles CRUD operations for solutions, solution_styling, and solution_content tables
  */
 class Solution
 {
     private PDO $db;
+
+    // Fields that belong to each table
+    private array $coreFields = [
+        'name', 'slug', 'description', 'tagline', 'subtitle', 'icon_image',
+        'video_url', 'demo_video_url', 'color_theme', 'testimonial_id', 'pricing_note',
+        'meta_title', 'meta_description', 'meta_keywords',
+        'display_order', 'status', 'featured_on_homepage'
+    ];
+
+    private array $stylingFields = [
+        'hero_badge', 'hero_title_text', 'hero_title_color', 'hero_subtitle_color',
+        'hero_media_url', 'hero_media_type', 'hero_bg_color', 'hero_bg_gradient_color',
+        'hero_bg_gradient_opacity', 'hero_bg_pattern_opacity',
+        'hero_cta_primary_text', 'hero_cta_primary_link',
+        'hero_cta_secondary_text', 'hero_cta_secondary_link',
+        'hero_primary_btn_bg_color', 'hero_primary_btn_text_color',
+        'hero_primary_btn_text_hover_color', 'hero_primary_btn_border_color',
+        'hero_secondary_btn_bg_color', 'hero_secondary_btn_text_color',
+        'hero_secondary_btn_text_hover_color', 'hero_secondary_btn_border_color',
+        'key_benefits_section_enabled', 'key_benefits_section_bg_color',
+        'key_benefits_section_heading1', 'key_benefits_section_heading2', 'key_benefits_section_subheading',
+        'key_benefits_section_heading_color', 'key_benefits_section_subheading_color',
+        'key_benefits_section_card_bg_color', 'key_benefits_section_card_border_color',
+        'key_benefits_section_card_hover_bg_color', 'key_benefits_section_card_text_color',
+        'key_benefits_section_card_icon_color',
+        'feature_showcase_section_enabled', 'feature_showcase_section_title', 'feature_showcase_section_subtitle',
+        'feature_showcase_section_bg_color', 'feature_showcase_section_title_color', 'feature_showcase_section_subtitle_color',
+        'feature_showcase_card_bg_color', 'feature_showcase_card_border_color',
+        'feature_showcase_card_badge_bg_color', 'feature_showcase_card_badge_text_color',
+        'feature_showcase_card_heading_color', 'feature_showcase_card_text_color', 'feature_showcase_card_icon_color',
+        'cta_banner_enabled', 'cta_banner_image_url', 'cta_banner_overlay_color', 'cta_banner_overlay_intensity',
+        'cta_banner_heading1', 'cta_banner_heading2', 'cta_banner_heading_color',
+        'cta_banner_button_text', 'cta_banner_button_link', 'cta_banner_button_bg_color', 'cta_banner_button_text_color'
+    ];
+
+    private array $contentFields = [
+        'features', 'screenshots', 'faqs', 'key_benefits_cards', 'feature_showcase_cards'
+    ];
 
     public function __construct()
     {
@@ -21,55 +59,238 @@ class Solution
     }
 
     /**
-     * Create a new solution
-     * 
-     * @param array $data Solution data (name, slug, description, features, screenshots, faqs, display_order, status)
-     * @return array|false Returns solution data with id on success, false on failure
+     * Create a new solution with styling and content
      */
     public function create(array $data)
     {
         try {
-            $id = $this->generateUuid();
-
-            $sql = "INSERT INTO solutions (
-                id, name, slug, description, icon_image, features, benefits, screenshots, faqs, display_order, status, featured_on_homepage
-            ) VALUES (
-                :id, :name, :slug, :description, :icon_image, :features, :benefits, :screenshots, :faqs, :display_order, :status, :featured_on_homepage
-            )";
-
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([
-                ':id' => $id,
-                ':name' => $data['name'],
-                ':slug' => $data['slug'],
-                ':description' => !empty($data['description']) ? $data['description'] : null,
-                ':icon_image' => !empty($data['icon_image']) ? $data['icon_image'] : null,
-                ':features' => isset($data['features']) ? json_encode($data['features']) : null,
-                ':benefits' => isset($data['benefits']) ? json_encode($data['benefits']) : null,
-                ':screenshots' => isset($data['screenshots']) ? json_encode($data['screenshots']) : null,
-                ':faqs' => isset($data['faqs']) ? json_encode($data['faqs']) : null,
-                ':display_order' => $data['display_order'] ?? 0,
-                ':status' => $data['status'] ?? 'DRAFT',
-                ':featured_on_homepage' => $data['featured_on_homepage'] ?? false
-            ]);
-
-            return $this->findById($id);
+            $this->db->beginTransaction();
+            
+            $solutionId = $this->generateUuid();
+            
+            // Insert into solutions table
+            $this->insertSolution($solutionId, $data);
+            
+            // Insert into solution_styling table
+            $this->insertStyling($solutionId, $data);
+            
+            // Insert into solution_content table
+            $this->insertContent($solutionId, $data);
+            
+            $this->db->commit();
+            return $this->findById($solutionId);
         } catch (PDOException $e) {
+            $this->db->rollBack();
             error_log('Solution creation failed: ' . $e->getMessage());
             return false;
         }
     }
 
+    private function insertSolution(string $id, array $data): void
+    {
+        $sql = "INSERT INTO solutions (
+            id, name, slug, description, tagline, subtitle, icon_image,
+            video_url, demo_video_url, color_theme, testimonial_id, pricing_note,
+            meta_title, meta_description, meta_keywords,
+            display_order, status, featured_on_homepage
+        ) VALUES (
+            :id, :name, :slug, :description, :tagline, :subtitle, :icon_image,
+            :video_url, :demo_video_url, :color_theme, :testimonial_id, :pricing_note,
+            :meta_title, :meta_description, :meta_keywords,
+            :display_order, :status, :featured_on_homepage
+        )";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            ':id' => $id,
+            ':name' => $data['name'],
+            ':slug' => $data['slug'],
+            ':description' => $data['description'] ?? null,
+            ':tagline' => $data['tagline'] ?? null,
+            ':subtitle' => $data['subtitle'] ?? null,
+            ':icon_image' => $data['icon_image'] ?? null,
+            ':video_url' => $data['video_url'] ?? null,
+            ':demo_video_url' => $data['demo_video_url'] ?? null,
+            ':color_theme' => $data['color_theme'] ?? '#667eea',
+            ':testimonial_id' => $data['testimonial_id'] ?? null,
+            ':pricing_note' => $data['pricing_note'] ?? null,
+            ':meta_title' => $data['meta_title'] ?? null,
+            ':meta_description' => $data['meta_description'] ?? null,
+            ':meta_keywords' => $data['meta_keywords'] ?? null,
+            ':display_order' => $data['display_order'] ?? 0,
+            ':status' => $data['status'] ?? 'DRAFT',
+            ':featured_on_homepage' => $data['featured_on_homepage'] ?? false
+        ]);
+    }
+
+
+    private function insertStyling(string $solutionId, array $data): void
+    {
+        $sql = "INSERT INTO solution_styling (
+            id, solution_id,
+            hero_badge, hero_title_text, hero_title_color, hero_subtitle_color,
+            hero_media_url, hero_media_type, hero_bg_color, hero_bg_gradient_color,
+            hero_bg_gradient_opacity, hero_bg_pattern_opacity,
+            hero_cta_primary_text, hero_cta_primary_link,
+            hero_cta_secondary_text, hero_cta_secondary_link,
+            hero_primary_btn_bg_color, hero_primary_btn_text_color, hero_primary_btn_text_hover_color, hero_primary_btn_border_color,
+            hero_secondary_btn_bg_color, hero_secondary_btn_text_color, hero_secondary_btn_text_hover_color, hero_secondary_btn_border_color,
+            key_benefits_section_enabled, key_benefits_section_bg_color,
+            key_benefits_section_heading1, key_benefits_section_heading2, key_benefits_section_subheading,
+            key_benefits_section_heading_color, key_benefits_section_subheading_color,
+            key_benefits_section_card_bg_color, key_benefits_section_card_border_color,
+            key_benefits_section_card_hover_bg_color, key_benefits_section_card_text_color, key_benefits_section_card_icon_color,
+            feature_showcase_section_enabled, feature_showcase_section_title, feature_showcase_section_subtitle,
+            feature_showcase_section_bg_color, feature_showcase_section_title_color, feature_showcase_section_subtitle_color,
+            feature_showcase_card_bg_color, feature_showcase_card_border_color,
+            feature_showcase_card_badge_bg_color, feature_showcase_card_badge_text_color,
+            feature_showcase_card_heading_color, feature_showcase_card_text_color, feature_showcase_card_icon_color,
+            cta_banner_enabled, cta_banner_image_url, cta_banner_overlay_color, cta_banner_overlay_intensity,
+            cta_banner_heading1, cta_banner_heading2, cta_banner_heading_color,
+            cta_banner_button_text, cta_banner_button_link, cta_banner_button_bg_color, cta_banner_button_text_color
+        ) VALUES (
+            :id, :solution_id,
+            :hero_badge, :hero_title_text, :hero_title_color, :hero_subtitle_color,
+            :hero_media_url, :hero_media_type, :hero_bg_color, :hero_bg_gradient_color,
+            :hero_bg_gradient_opacity, :hero_bg_pattern_opacity,
+            :hero_cta_primary_text, :hero_cta_primary_link,
+            :hero_cta_secondary_text, :hero_cta_secondary_link,
+            :hero_primary_btn_bg_color, :hero_primary_btn_text_color, :hero_primary_btn_text_hover_color, :hero_primary_btn_border_color,
+            :hero_secondary_btn_bg_color, :hero_secondary_btn_text_color, :hero_secondary_btn_text_hover_color, :hero_secondary_btn_border_color,
+            :key_benefits_section_enabled, :key_benefits_section_bg_color,
+            :key_benefits_section_heading1, :key_benefits_section_heading2, :key_benefits_section_subheading,
+            :key_benefits_section_heading_color, :key_benefits_section_subheading_color,
+            :key_benefits_section_card_bg_color, :key_benefits_section_card_border_color,
+            :key_benefits_section_card_hover_bg_color, :key_benefits_section_card_text_color, :key_benefits_section_card_icon_color,
+            :feature_showcase_section_enabled, :feature_showcase_section_title, :feature_showcase_section_subtitle,
+            :feature_showcase_section_bg_color, :feature_showcase_section_title_color, :feature_showcase_section_subtitle_color,
+            :feature_showcase_card_bg_color, :feature_showcase_card_border_color,
+            :feature_showcase_card_badge_bg_color, :feature_showcase_card_badge_text_color,
+            :feature_showcase_card_heading_color, :feature_showcase_card_text_color, :feature_showcase_card_icon_color,
+            :cta_banner_enabled, :cta_banner_image_url, :cta_banner_overlay_color, :cta_banner_overlay_intensity,
+            :cta_banner_heading1, :cta_banner_heading2, :cta_banner_heading_color,
+            :cta_banner_button_text, :cta_banner_button_link, :cta_banner_button_bg_color, :cta_banner_button_text_color
+        )";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            ':id' => $this->generateUuid(),
+            ':solution_id' => $solutionId,
+            ':hero_badge' => $data['hero_badge'] ?? null,
+            ':hero_title_text' => isset($data['hero_title_text']) ? substr($data['hero_title_text'], 0, 24) : null,
+            ':hero_title_color' => $data['hero_title_color'] ?? '#FFFFFF',
+            ':hero_subtitle_color' => $data['hero_subtitle_color'] ?? '#FFFFFF',
+            ':hero_media_url' => $data['hero_media_url'] ?? null,
+            ':hero_media_type' => $data['hero_media_type'] ?? 'image',
+            ':hero_bg_color' => $data['hero_bg_color'] ?? '#0a1628',
+            ':hero_bg_gradient_color' => $data['hero_bg_gradient_color'] ?? null,
+            ':hero_bg_gradient_opacity' => $data['hero_bg_gradient_opacity'] ?? 0.60,
+            ':hero_bg_pattern_opacity' => $data['hero_bg_pattern_opacity'] ?? 0.03,
+            ':hero_cta_primary_text' => $data['hero_cta_primary_text'] ?? 'Get Started',
+            ':hero_cta_primary_link' => $data['hero_cta_primary_link'] ?? null,
+            ':hero_cta_secondary_text' => $data['hero_cta_secondary_text'] ?? 'Watch Demo',
+            ':hero_cta_secondary_link' => $data['hero_cta_secondary_link'] ?? null,
+            ':hero_primary_btn_bg_color' => $data['hero_primary_btn_bg_color'] ?? 'rgba(255,255,255,0.15)',
+            ':hero_primary_btn_text_color' => $data['hero_primary_btn_text_color'] ?? '#FFFFFF',
+            ':hero_primary_btn_text_hover_color' => $data['hero_primary_btn_text_hover_color'] ?? '#FFFFFF',
+            ':hero_primary_btn_border_color' => $data['hero_primary_btn_border_color'] ?? 'rgba(255,255,255,0.3)',
+            ':hero_secondary_btn_bg_color' => $data['hero_secondary_btn_bg_color'] ?? 'rgba(255,255,255,0.1)',
+            ':hero_secondary_btn_text_color' => $data['hero_secondary_btn_text_color'] ?? '#FFFFFF',
+            ':hero_secondary_btn_text_hover_color' => $data['hero_secondary_btn_text_hover_color'] ?? '#FFFFFF',
+            ':hero_secondary_btn_border_color' => $data['hero_secondary_btn_border_color'] ?? 'rgba(255,255,255,0.2)',
+            ':key_benefits_section_enabled' => $data['key_benefits_section_enabled'] ?? false,
+            ':key_benefits_section_bg_color' => $data['key_benefits_section_bg_color'] ?? '#0a1628',
+            ':key_benefits_section_heading1' => $data['key_benefits_section_heading1'] ?? '',
+            ':key_benefits_section_heading2' => $data['key_benefits_section_heading2'] ?? '',
+            ':key_benefits_section_subheading' => $data['key_benefits_section_subheading'] ?? null,
+            ':key_benefits_section_heading_color' => $data['key_benefits_section_heading_color'] ?? '#FFFFFF',
+            ':key_benefits_section_subheading_color' => $data['key_benefits_section_subheading_color'] ?? '#ffffffb3',
+            ':key_benefits_section_card_bg_color' => $data['key_benefits_section_card_bg_color'] ?? '#ffffff14',
+            ':key_benefits_section_card_border_color' => $data['key_benefits_section_card_border_color'] ?? '#ffffff1a',
+            ':key_benefits_section_card_hover_bg_color' => $data['key_benefits_section_card_hover_bg_color'] ?? '#2563eb',
+            ':key_benefits_section_card_text_color' => $data['key_benefits_section_card_text_color'] ?? '#FFFFFF',
+            ':key_benefits_section_card_icon_color' => $data['key_benefits_section_card_icon_color'] ?? '#ffffff99',
+            ':feature_showcase_section_enabled' => $data['feature_showcase_section_enabled'] ?? false,
+            ':feature_showcase_section_title' => $data['feature_showcase_section_title'] ?? 'One solution. All business sizes.',
+            ':feature_showcase_section_subtitle' => $data['feature_showcase_section_subtitle'] ?? null,
+            ':feature_showcase_section_bg_color' => $data['feature_showcase_section_bg_color'] ?? '#ffffff',
+            ':feature_showcase_section_title_color' => $data['feature_showcase_section_title_color'] ?? '#1a202c',
+            ':feature_showcase_section_subtitle_color' => $data['feature_showcase_section_subtitle_color'] ?? '#718096',
+            ':feature_showcase_card_bg_color' => $data['feature_showcase_card_bg_color'] ?? '#ffffff',
+            ':feature_showcase_card_border_color' => $data['feature_showcase_card_border_color'] ?? '#e2e8f0',
+            ':feature_showcase_card_badge_bg_color' => $data['feature_showcase_card_badge_bg_color'] ?? '#ebf8ff',
+            ':feature_showcase_card_badge_text_color' => $data['feature_showcase_card_badge_text_color'] ?? '#2b6cb0',
+            ':feature_showcase_card_heading_color' => $data['feature_showcase_card_heading_color'] ?? '#1a202c',
+            ':feature_showcase_card_text_color' => $data['feature_showcase_card_text_color'] ?? '#4a5568',
+            ':feature_showcase_card_icon_color' => $data['feature_showcase_card_icon_color'] ?? '#38a169',
+            ':cta_banner_enabled' => $data['cta_banner_enabled'] ?? true,
+            ':cta_banner_image_url' => $data['cta_banner_image_url'] ?? null,
+            ':cta_banner_overlay_color' => $data['cta_banner_overlay_color'] ?? 'rgba(0,0,0,0.5)',
+            ':cta_banner_overlay_intensity' => $data['cta_banner_overlay_intensity'] ?? 0.50,
+            ':cta_banner_heading1' => $data['cta_banner_heading1'] ?? 'Streamline across 30+ modules.',
+            ':cta_banner_heading2' => $data['cta_banner_heading2'] ?? 'Transform your business today!',
+            ':cta_banner_heading_color' => $data['cta_banner_heading_color'] ?? '#FFFFFF',
+            ':cta_banner_button_text' => $data['cta_banner_button_text'] ?? 'Explore ERP Solutions',
+            ':cta_banner_button_link' => $data['cta_banner_button_link'] ?? '#contact-form',
+            ':cta_banner_button_bg_color' => $data['cta_banner_button_bg_color'] ?? '#FFFFFF',
+            ':cta_banner_button_text_color' => $data['cta_banner_button_text_color'] ?? '#2563eb'
+        ]);
+    }
+
+    private function insertContent(string $solutionId, array $data): void
+    {
+        $sql = "INSERT INTO solution_content (
+            id, solution_id, features, screenshots, faqs, key_benefits_cards, feature_showcase_cards
+        ) VALUES (
+            :id, :solution_id, :features, :screenshots, :faqs, :key_benefits_cards, :feature_showcase_cards
+        )";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            ':id' => $this->generateUuid(),
+            ':solution_id' => $solutionId,
+            ':features' => isset($data['features']) ? json_encode($data['features']) : null,
+            ':screenshots' => isset($data['screenshots']) ? json_encode($data['screenshots']) : null,
+            ':faqs' => isset($data['faqs']) ? json_encode($data['faqs']) : null,
+            ':key_benefits_cards' => isset($data['key_benefits_cards']) ? json_encode($data['key_benefits_cards']) : null,
+            ':feature_showcase_cards' => isset($data['feature_showcase_cards']) ? json_encode($data['feature_showcase_cards']) : null
+        ]);
+    }
+
+
     /**
-     * Find solution by ID
-     * 
-     * @param string $id Solution ID
-     * @return array|false Returns solution data or false if not found
+     * Find solution by ID with styling and content
      */
     public function findById(string $id)
     {
         try {
-            $sql = "SELECT * FROM solutions WHERE id = :id";
+            $sql = "SELECT s.*, 
+                    st.hero_badge, st.hero_title_text, st.hero_title_color, st.hero_subtitle_color,
+                    st.hero_media_url, st.hero_media_type, st.hero_bg_color, st.hero_bg_gradient_color,
+                    st.hero_bg_gradient_opacity, st.hero_bg_pattern_opacity,
+                    st.hero_cta_primary_text, st.hero_cta_primary_link,
+                    st.hero_cta_secondary_text, st.hero_cta_secondary_link,
+                    st.hero_primary_btn_bg_color, st.hero_primary_btn_text_color, st.hero_primary_btn_text_hover_color, st.hero_primary_btn_border_color,
+                    st.hero_secondary_btn_bg_color, st.hero_secondary_btn_text_color, st.hero_secondary_btn_text_hover_color, st.hero_secondary_btn_border_color,
+                    st.key_benefits_section_enabled, st.key_benefits_section_bg_color,
+                    st.key_benefits_section_heading1, st.key_benefits_section_heading2, st.key_benefits_section_subheading,
+                    st.key_benefits_section_heading_color, st.key_benefits_section_subheading_color,
+                    st.key_benefits_section_card_bg_color, st.key_benefits_section_card_border_color,
+                    st.key_benefits_section_card_hover_bg_color, st.key_benefits_section_card_text_color, st.key_benefits_section_card_icon_color,
+                    st.feature_showcase_section_enabled, st.feature_showcase_section_title, st.feature_showcase_section_subtitle,
+                    st.feature_showcase_section_bg_color, st.feature_showcase_section_title_color, st.feature_showcase_section_subtitle_color,
+                    st.feature_showcase_card_bg_color, st.feature_showcase_card_border_color,
+                    st.feature_showcase_card_badge_bg_color, st.feature_showcase_card_badge_text_color,
+                    st.feature_showcase_card_heading_color, st.feature_showcase_card_text_color, st.feature_showcase_card_icon_color,
+                    st.cta_banner_enabled, st.cta_banner_image_url, st.cta_banner_overlay_color, st.cta_banner_overlay_intensity,
+                    st.cta_banner_heading1, st.cta_banner_heading2, st.cta_banner_heading_color,
+                    st.cta_banner_button_text, st.cta_banner_button_link, st.cta_banner_button_bg_color, st.cta_banner_button_text_color,
+                    sc.features, sc.screenshots, sc.faqs, sc.key_benefits_cards, sc.feature_showcase_cards
+                FROM solutions s
+                LEFT JOIN solution_styling st ON s.id = st.solution_id
+                LEFT JOIN solution_content sc ON s.id = sc.solution_id
+                WHERE s.id = :id";
+            
             $stmt = $this->db->prepare($sql);
             $stmt->execute([':id' => $id]);
             
@@ -87,15 +308,38 @@ class Solution
     }
 
     /**
-     * Find solution by slug
-     * 
-     * @param string $slug Solution slug
-     * @return array|false Returns solution data or false if not found
+     * Find solution by slug with styling and content
      */
     public function findBySlug(string $slug)
     {
         try {
-            $sql = "SELECT * FROM solutions WHERE slug = :slug";
+            $sql = "SELECT s.*, 
+                    st.hero_badge, st.hero_title_text, st.hero_title_color, st.hero_subtitle_color,
+                    st.hero_media_url, st.hero_media_type, st.hero_bg_color, st.hero_bg_gradient_color,
+                    st.hero_bg_gradient_opacity, st.hero_bg_pattern_opacity,
+                    st.hero_cta_primary_text, st.hero_cta_primary_link,
+                    st.hero_cta_secondary_text, st.hero_cta_secondary_link,
+                    st.hero_primary_btn_bg_color, st.hero_primary_btn_text_color, st.hero_primary_btn_text_hover_color, st.hero_primary_btn_border_color,
+                    st.hero_secondary_btn_bg_color, st.hero_secondary_btn_text_color, st.hero_secondary_btn_text_hover_color, st.hero_secondary_btn_border_color,
+                    st.key_benefits_section_enabled, st.key_benefits_section_bg_color,
+                    st.key_benefits_section_heading1, st.key_benefits_section_heading2, st.key_benefits_section_subheading,
+                    st.key_benefits_section_heading_color, st.key_benefits_section_subheading_color,
+                    st.key_benefits_section_card_bg_color, st.key_benefits_section_card_border_color,
+                    st.key_benefits_section_card_hover_bg_color, st.key_benefits_section_card_text_color, st.key_benefits_section_card_icon_color,
+                    st.feature_showcase_section_enabled, st.feature_showcase_section_title, st.feature_showcase_section_subtitle,
+                    st.feature_showcase_section_bg_color, st.feature_showcase_section_title_color, st.feature_showcase_section_subtitle_color,
+                    st.feature_showcase_card_bg_color, st.feature_showcase_card_border_color,
+                    st.feature_showcase_card_badge_bg_color, st.feature_showcase_card_badge_text_color,
+                    st.feature_showcase_card_heading_color, st.feature_showcase_card_text_color, st.feature_showcase_card_icon_color,
+                    st.cta_banner_enabled, st.cta_banner_image_url, st.cta_banner_overlay_color, st.cta_banner_overlay_intensity,
+                    st.cta_banner_heading1, st.cta_banner_heading2, st.cta_banner_heading_color,
+                    st.cta_banner_button_text, st.cta_banner_button_link, st.cta_banner_button_bg_color, st.cta_banner_button_text_color,
+                    sc.features, sc.screenshots, sc.faqs, sc.key_benefits_cards, sc.feature_showcase_cards
+                FROM solutions s
+                LEFT JOIN solution_styling st ON s.id = st.solution_id
+                LEFT JOIN solution_content sc ON s.id = sc.solution_id
+                WHERE s.slug = :slug";
+            
             $stmt = $this->db->prepare($sql);
             $stmt->execute([':slug' => $slug]);
             
@@ -113,62 +357,113 @@ class Solution
     }
 
     /**
-     * Update solution data
-     * 
-     * @param string $id Solution ID
-     * @param array $data Data to update
-     * @return bool Returns true on success, false on failure
+     * Update solution data across all three tables
      */
     public function update(string $id, array $data): bool
     {
         try {
-            $allowedFields = ['name', 'slug', 'description', 'icon_image', 'features', 'benefits', 'screenshots', 'faqs', 'display_order', 'status', 'featured_on_homepage'];
-            $updateFields = [];
-            $params = [':id' => $id];
-
+            $this->db->beginTransaction();
+            
+            // Separate data by table
+            $coreData = [];
+            $stylingData = [];
+            $contentData = [];
+            
             foreach ($data as $key => $value) {
-                if (in_array($key, $allowedFields)) {
-                    if (in_array($key, ['features', 'benefits', 'screenshots', 'faqs'])) {
-                        $updateFields[] = "$key = :$key";
-                        $params[":$key"] = is_array($value) ? json_encode($value) : $value;
-                    } else {
-                        $updateFields[] = "$key = :$key";
-                        // Convert empty strings to NULL for optional fields
-                        if (in_array($key, ['description', 'icon_image']) && $value === '') {
-                            $params[":$key"] = null;
-                        } else {
-                            $params[":$key"] = $value;
-                        }
-                    }
+                if (in_array($key, $this->coreFields)) {
+                    $coreData[$key] = $value;
+                } elseif (in_array($key, $this->stylingFields)) {
+                    $stylingData[$key] = $value;
+                } elseif (in_array($key, $this->contentFields)) {
+                    $contentData[$key] = $value;
                 }
             }
-
-            if (empty($updateFields)) {
-                return false;
-            }
-
-            $sql = "UPDATE solutions SET " . implode(', ', $updateFields) . " WHERE id = :id";
-            $stmt = $this->db->prepare($sql);
             
-            return $stmt->execute($params);
+            // Update solutions table
+            if (!empty($coreData)) {
+                $this->updateTable('solutions', 'id', $id, $coreData);
+            }
+            
+            // Update solution_styling table
+            if (!empty($stylingData)) {
+                $this->updateTable('solution_styling', 'solution_id', $id, $stylingData);
+            }
+            
+            // Update solution_content table
+            if (!empty($contentData)) {
+                $this->updateContentTable($id, $contentData);
+            }
+            
+            $this->db->commit();
+            return true;
         } catch (PDOException $e) {
+            $this->db->rollBack();
             error_log('Solution update failed: ' . $e->getMessage());
             return false;
         }
     }
 
+    private function updateTable(string $table, string $idColumn, string $id, array $data): void
+    {
+        $nullableFields = [
+            'description', 'tagline', 'subtitle', 'hero_badge', 'hero_title_text',
+            'icon_image', 'hero_media_url', 'video_url', 'demo_video_url',
+            'testimonial_id', 'hero_cta_primary_link', 'hero_cta_secondary_link',
+            'pricing_note', 'meta_title', 'meta_description', 'meta_keywords',
+            'hero_bg_gradient_color', 'key_benefits_section_heading1', 'key_benefits_section_heading2',
+            'key_benefits_section_subheading', 'feature_showcase_section_title', 'feature_showcase_section_subtitle',
+            'cta_banner_image_url', 'cta_banner_heading1', 'cta_banner_heading2', 'cta_banner_button_text', 'cta_banner_button_link'
+        ];
+        
+        $updateFields = [];
+        $params = [":$idColumn" => $id];
+        
+        foreach ($data as $key => $value) {
+            $updateFields[] = "$key = :$key";
+            if (in_array($key, $nullableFields) && $value === '') {
+                $params[":$key"] = null;
+            } else {
+                $params[":$key"] = $value;
+            }
+        }
+        
+        if (empty($updateFields)) {
+            return;
+        }
+        
+        $sql = "UPDATE $table SET " . implode(', ', $updateFields) . " WHERE $idColumn = :$idColumn";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+    }
+
+    private function updateContentTable(string $solutionId, array $data): void
+    {
+        $updateFields = [];
+        $params = [':solution_id' => $solutionId];
+        
+        foreach ($data as $key => $value) {
+            $updateFields[] = "$key = :$key";
+            $params[":$key"] = is_array($value) ? json_encode($value) : $value;
+        }
+        
+        if (empty($updateFields)) {
+            return;
+        }
+        
+        $sql = "UPDATE solution_content SET " . implode(', ', $updateFields) . " WHERE solution_id = :solution_id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+    }
+
+
     /**
-     * Delete solution
-     * 
-     * @param string $id Solution ID
-     * @return bool Returns true on success, false on failure
+     * Delete solution (cascades to styling and content via FK)
      */
     public function delete(string $id): bool
     {
         try {
             $sql = "DELETE FROM solutions WHERE id = :id";
             $stmt = $this->db->prepare($sql);
-            
             return $stmt->execute([':id' => $id]);
         } catch (PDOException $e) {
             error_log('Solution deletion failed: ' . $e->getMessage());
@@ -178,24 +473,44 @@ class Solution
 
     /**
      * Get all solutions with optional filters
-     * 
-     * @param array $filters Optional filters (status)
-     * @param int $limit Optional limit
-     * @param int $offset Optional offset
-     * @return array Returns array of solutions
      */
     public function findAll(array $filters = [], int $limit = 100, int $offset = 0): array
     {
         try {
-            $sql = "SELECT * FROM solutions WHERE 1=1";
+            $sql = "SELECT s.*, 
+                    st.hero_badge, st.hero_title_text, st.hero_title_color, st.hero_subtitle_color,
+                    st.hero_media_url, st.hero_media_type, st.hero_bg_color, st.hero_bg_gradient_color,
+                    st.hero_bg_gradient_opacity, st.hero_bg_pattern_opacity,
+                    st.hero_cta_primary_text, st.hero_cta_primary_link,
+                    st.hero_cta_secondary_text, st.hero_cta_secondary_link,
+                    st.hero_primary_btn_bg_color, st.hero_primary_btn_text_color, st.hero_primary_btn_text_hover_color, st.hero_primary_btn_border_color,
+                    st.hero_secondary_btn_bg_color, st.hero_secondary_btn_text_color, st.hero_secondary_btn_text_hover_color, st.hero_secondary_btn_border_color,
+                    st.key_benefits_section_enabled, st.key_benefits_section_bg_color,
+                    st.key_benefits_section_heading1, st.key_benefits_section_heading2, st.key_benefits_section_subheading,
+                    st.key_benefits_section_heading_color, st.key_benefits_section_subheading_color,
+                    st.key_benefits_section_card_bg_color, st.key_benefits_section_card_border_color,
+                    st.key_benefits_section_card_hover_bg_color, st.key_benefits_section_card_text_color, st.key_benefits_section_card_icon_color,
+                    st.feature_showcase_section_enabled, st.feature_showcase_section_title, st.feature_showcase_section_subtitle,
+                    st.feature_showcase_section_bg_color, st.feature_showcase_section_title_color, st.feature_showcase_section_subtitle_color,
+                    st.feature_showcase_card_bg_color, st.feature_showcase_card_border_color,
+                    st.feature_showcase_card_badge_bg_color, st.feature_showcase_card_badge_text_color,
+                    st.feature_showcase_card_heading_color, st.feature_showcase_card_text_color, st.feature_showcase_card_icon_color,
+                    st.cta_banner_enabled, st.cta_banner_image_url, st.cta_banner_overlay_color, st.cta_banner_overlay_intensity,
+                    st.cta_banner_heading1, st.cta_banner_heading2, st.cta_banner_heading_color,
+                    st.cta_banner_button_text, st.cta_banner_button_link, st.cta_banner_button_bg_color, st.cta_banner_button_text_color,
+                    sc.features, sc.screenshots, sc.faqs, sc.key_benefits_cards, sc.feature_showcase_cards
+                FROM solutions s
+                LEFT JOIN solution_styling st ON s.id = st.solution_id
+                LEFT JOIN solution_content sc ON s.id = sc.solution_id
+                WHERE 1=1";
             $params = [];
 
             if (isset($filters['status'])) {
-                $sql .= " AND status = :status";
+                $sql .= " AND s.status = :status";
                 $params[':status'] = $filters['status'];
             }
 
-            $sql .= " ORDER BY display_order ASC, created_at DESC LIMIT :limit OFFSET :offset";
+            $sql .= " ORDER BY s.display_order ASC, s.created_at DESC LIMIT :limit OFFSET :offset";
 
             $stmt = $this->db->prepare($sql);
             
@@ -222,17 +537,19 @@ class Solution
 
     /**
      * Get featured solutions for homepage
-     * 
-     * @param int $limit Maximum number of solutions to return
-     * @return array Returns array of featured solutions
      */
     public function getFeaturedSolutions(int $limit = 6): array
     {
         try {
-            $sql = "SELECT * FROM solutions 
-                    WHERE status = 'PUBLISHED' AND featured_on_homepage = TRUE 
-                    ORDER BY display_order ASC, created_at DESC 
-                    LIMIT :limit";
+            $sql = "SELECT s.*, 
+                    st.hero_badge, st.hero_media_url, st.hero_media_type,
+                    sc.features
+                FROM solutions s
+                LEFT JOIN solution_styling st ON s.id = st.solution_id
+                LEFT JOIN solution_content sc ON s.id = sc.solution_id
+                WHERE s.status = 'PUBLISHED' AND s.featured_on_homepage = TRUE 
+                ORDER BY s.display_order ASC, s.created_at DESC 
+                LIMIT :limit";
 
             $stmt = $this->db->prepare($sql);
             $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
@@ -253,10 +570,6 @@ class Solution
 
     /**
      * Check if slug exists
-     * 
-     * @param string $slug Slug to check
-     * @param string|null $excludeId Optional solution ID to exclude from check
-     * @return bool Returns true if slug exists, false otherwise
      */
     public function slugExists(string $slug, ?string $excludeId = null): bool
     {
@@ -281,7 +594,9 @@ class Solution
 
     private function decodeJsonFields(array $data): array
     {
-        $jsonFields = ['features', 'benefits', 'screenshots', 'faqs', 'use_cases', 'stats'];
+        $jsonFields = [
+            'features', 'screenshots', 'faqs', 'key_benefits_cards', 'feature_showcase_cards'
+        ];
         
         foreach ($jsonFields as $field) {
             if (isset($data[$field]) && is_string($data[$field])) {
@@ -294,9 +609,6 @@ class Solution
 
     /**
      * Get linked features for a solution
-     * 
-     * @param string $solutionId Solution ID
-     * @return array Returns array of linked features with full details
      */
     public function getLinkedFeatures(string $solutionId): array
     {
@@ -313,7 +625,6 @@ class Solution
             $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
             foreach ($results as &$result) {
-                // Decode JSON fields for features
                 $jsonFields = ['benefits', 'related_solutions', 'screenshots'];
                 foreach ($jsonFields as $field) {
                     if (isset($result[$field]) && is_string($result[$field])) {
@@ -330,11 +641,7 @@ class Solution
     }
 
     /**
-     * Get related solutions (solutions that share features with this one)
-     * 
-     * @param string $solutionId Solution ID
-     * @param int $limit Maximum number of related solutions
-     * @return array Returns array of related solutions
+     * Get related solutions
      */
     public function getRelatedSolutions(string $solutionId, int $limit = 3): array
     {

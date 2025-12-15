@@ -48,20 +48,23 @@ try {
     $total_solutions = $count_stmt->fetchColumn();
     $total_pages = ceil($total_solutions / $per_page);
     
-    $sql = "SELECT * FROM solutions WHERE 1=1";
+    $sql = "SELECT s.*, sc.features, sc.screenshots, sc.faqs 
+            FROM solutions s
+            LEFT JOIN solution_content sc ON s.id = sc.solution_id
+            WHERE 1=1";
     $params = [];
     
     if (!empty($status_filter)) {
-        $sql .= " AND status = :status";
+        $sql .= " AND s.status = :status";
         $params[':status'] = $status_filter;
     }
     
     if (!empty($search_query)) {
-        $sql .= " AND (name LIKE :search OR description LIKE :search)";
+        $sql .= " AND (s.name LIKE :search OR s.description LIKE :search)";
         $params[':search'] = '%' . $search_query . '%';
     }
     
-    $sql .= " ORDER BY display_order ASC, created_at DESC LIMIT :limit OFFSET :offset";
+    $sql .= " ORDER BY s.display_order ASC, s.created_at DESC LIMIT :limit OFFSET :offset";
     
     $stmt = $db->prepare($sql);
     
