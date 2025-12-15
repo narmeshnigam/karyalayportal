@@ -90,6 +90,7 @@ try {
             $case_study['solutions_used'] = json_decode($case_study['solutions_used'], true);
         }
     }
+    unset($case_study); // Break the reference to prevent duplicate rendering
     
 } catch (PDOException $e) {
     error_log("Case studies list error: " . $e->getMessage());

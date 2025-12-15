@@ -106,6 +106,27 @@ $form_data = [
     'cta_banner_button_link' => $solution['cta_banner_button_link'] ?? '#contact-form',
     'cta_banner_button_bg_color' => $solution['cta_banner_button_bg_color'] ?? '#FFFFFF',
     'cta_banner_button_text_color' => $solution['cta_banner_button_text_color'] ?? '#2563eb',
+    // Industries Section
+    'industries_section_enabled' => $solution['industries_section_enabled'] ?? true,
+    'industries_section_title' => $solution['industries_section_title'] ?? 'Industries We Serve',
+    'industries_section_subtitle' => $solution['industries_section_subtitle'] ?? 'Trusted by leading organizations across diverse sectors',
+    'industries_section_bg_color' => $solution['industries_section_bg_color'] ?? '#f8fafc',
+    'industries_section_title_color' => $solution['industries_section_title_color'] ?? '#1a202c',
+    'industries_section_subtitle_color' => $solution['industries_section_subtitle_color'] ?? '#718096',
+    'industries_section_card_overlay_color' => $solution['industries_section_card_overlay_color'] ?? 'rgba(0,0,0,0.4)',
+    'industries_section_card_title_color' => $solution['industries_section_card_title_color'] ?? '#FFFFFF',
+    'industries_section_card_desc_color' => $solution['industries_section_card_desc_color'] ?? 'rgba(255,255,255,0.9)',
+    'industries_section_card_btn_bg_color' => $solution['industries_section_card_btn_bg_color'] ?? 'rgba(255,255,255,0.2)',
+    'industries_section_card_btn_text_color' => $solution['industries_section_card_btn_text_color'] ?? '#FFFFFF',
+    'industries_cards' => $solution['industries_cards'] ?? [],
+    // Testimonials Section
+    'testimonials_section_theme' => $solution['testimonials_section_theme'] ?? 'light',
+    'testimonials_section_heading' => $solution['testimonials_section_heading'] ?? 'What Our Customers Say',
+    'testimonials_section_subheading' => $solution['testimonials_section_subheading'] ?? 'Trusted by leading businesses who have transformed their operations with our solutions',
+    // FAQs Section
+    'faqs_section_theme' => $solution['faqs_section_theme'] ?? 'light',
+    'faqs_section_heading' => $solution['faqs_section_heading'] ?? 'Frequently Asked Questions',
+    'faqs_section_subheading' => $solution['faqs_section_subheading'] ?? 'Everything you need to know about our solution. Can\'t find what you\'re looking for? Feel free to contact us.',
     'pricing_note' => $solution['pricing_note'] ?? '',
     'meta_title' => $solution['meta_title'] ?? '',
     'meta_description' => $solution['meta_description'] ?? '',
@@ -258,6 +279,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $form_data['cta_banner_button_link'] = sanitizeString($_POST['cta_banner_button_link'] ?? '#contact-form');
         $form_data['cta_banner_button_bg_color'] = sanitizeString($_POST['cta_banner_button_bg_color'] ?? '#FFFFFF');
         $form_data['cta_banner_button_text_color'] = sanitizeString($_POST['cta_banner_button_text_color'] ?? '#2563eb');
+        
+        // Process Industries section fields
+        $form_data['industries_section_enabled'] = isset($_POST['industries_section_enabled']) ? true : false;
+        $form_data['industries_section_title'] = substr(sanitizeString($_POST['industries_section_title'] ?? ''), 0, 100);
+        $form_data['industries_section_subtitle'] = substr(sanitizeString($_POST['industries_section_subtitle'] ?? ''), 0, 255);
+        $form_data['industries_section_bg_color'] = sanitizeString($_POST['industries_section_bg_color'] ?? '#f8fafc');
+        $form_data['industries_section_title_color'] = sanitizeString($_POST['industries_section_title_color'] ?? '#1a202c');
+        $form_data['industries_section_subtitle_color'] = sanitizeString($_POST['industries_section_subtitle_color'] ?? '#718096');
+        $form_data['industries_section_card_overlay_color'] = sanitizeString($_POST['industries_section_card_overlay_color'] ?? 'rgba(0,0,0,0.4)');
+        $form_data['industries_section_card_title_color'] = sanitizeString($_POST['industries_section_card_title_color'] ?? '#FFFFFF');
+        $form_data['industries_section_card_desc_color'] = sanitizeString($_POST['industries_section_card_desc_color'] ?? 'rgba(255,255,255,0.9)');
+        $form_data['industries_section_card_btn_bg_color'] = sanitizeString($_POST['industries_section_card_btn_bg_color'] ?? 'rgba(255,255,255,0.2)');
+        $form_data['industries_section_card_btn_text_color'] = sanitizeString($_POST['industries_section_card_btn_text_color'] ?? '#FFFFFF');
+        
+        // Process industries_cards JSON
+        if (!empty($_POST['industries_cards'])) {
+            $decoded = json_decode($_POST['industries_cards'], true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                // Limit to max 10 cards
+                if (count($decoded) > 10) {
+                    $decoded = array_slice($decoded, 0, 10);
+                }
+                $form_data['industries_cards'] = $decoded;
+            } else {
+                $errors[] = 'Industries cards must be valid JSON format.';
+            }
+        } else {
+            $form_data['industries_cards'] = [];
+        }
+        
+        // Process Testimonials Section fields
+        $form_data['testimonials_section_theme'] = in_array($_POST['testimonials_section_theme'] ?? 'light', ['light', 'dark']) 
+            ? $_POST['testimonials_section_theme'] 
+            : 'light';
+        $form_data['testimonials_section_heading'] = substr(sanitizeString($_POST['testimonials_section_heading'] ?? ''), 0, 48);
+        $form_data['testimonials_section_subheading'] = substr(sanitizeString($_POST['testimonials_section_subheading'] ?? ''), 0, 120);
+        
+        // Process FAQs Section fields
+        $form_data['faqs_section_theme'] = in_array($_POST['faqs_section_theme'] ?? 'light', ['light', 'dark']) 
+            ? $_POST['faqs_section_theme'] 
+            : 'light';
+        $form_data['faqs_section_heading'] = substr(sanitizeString($_POST['faqs_section_heading'] ?? ''), 0, 48);
+        $form_data['faqs_section_subheading'] = substr(sanitizeString($_POST['faqs_section_subheading'] ?? ''), 0, 120);
         
         if (empty($errors)) {
             try {
@@ -1005,6 +1069,39 @@ include_admin_header('Edit Solution');
             </div>
         </div>
         
+        <!-- FAQs Section Settings -->
+        <div class="form-section">
+            <h2 class="form-section-title">FAQs Section</h2>
+            <p class="form-section-desc">Customize the FAQs section appearance on the solution detail page.</p>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="faqs_section_theme" class="form-label">Theme / Mode</label>
+                    <select id="faqs_section_theme" name="faqs_section_theme" class="form-select">
+                        <option value="light" <?php echo ($form_data['faqs_section_theme'] ?? 'light') === 'light' ? 'selected' : ''; ?>>Light</option>
+                        <option value="dark" <?php echo ($form_data['faqs_section_theme'] ?? 'light') === 'dark' ? 'selected' : ''; ?>>Dark</option>
+                    </select>
+                    <p class="form-help">Choose between light or dark background theme</p>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="faqs_section_heading" class="form-label">Section Heading</label>
+                <input type="text" id="faqs_section_heading" name="faqs_section_heading" class="form-input" 
+                    value="<?php echo htmlspecialchars($form_data['faqs_section_heading']); ?>" maxlength="48"
+                    placeholder="e.g., Frequently Asked Questions">
+                <p class="form-help">Max 48 characters (<span id="faqs_heading_count"><?php echo strlen($form_data['faqs_section_heading']); ?></span>/48)</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="faqs_section_subheading" class="form-label">Section Subheading</label>
+                <input type="text" id="faqs_section_subheading" name="faqs_section_subheading" class="form-input" 
+                    value="<?php echo htmlspecialchars($form_data['faqs_section_subheading']); ?>" maxlength="120"
+                    placeholder="e.g., Everything you need to know about our solution">
+                <p class="form-help">Max 120 characters (<span id="faqs_subheading_count"><?php echo strlen($form_data['faqs_section_subheading']); ?></span>/120)</p>
+            </div>
+        </div>
+        
         <!-- CTA Banner Section (Image with Overlay) -->
         <div class="form-section">
             <h2 class="form-section-title">CTA Banner Section (Image with Overlay)</h2>
@@ -1126,6 +1223,178 @@ include_admin_header('Edit Solution');
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Industries Gallery Section -->
+        <div class="form-section">
+            <h2 class="form-section-title">Industries Gallery Section</h2>
+            <p class="form-section-desc">A horizontal scrolling gallery showcasing industries served. Each card has an image, title, description, and link.</p>
+            
+            <div class="form-group">
+                <div class="form-checkbox-group">
+                    <label class="form-checkbox-label">
+                        <input type="checkbox" id="industries_section_enabled" name="industries_section_enabled" 
+                               class="form-checkbox" value="1"
+                               <?php echo !empty($form_data['industries_section_enabled']) ? 'checked' : ''; ?>>
+                        <span class="form-checkbox-text">
+                            <strong>Enable Industries Section</strong>
+                            <span class="form-checkbox-help">Show this section after the testimonials section</span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-subsection">
+                <h3 class="form-subsection-title">Section Header</h3>
+                <div class="form-group">
+                    <label for="industries_section_title" class="form-label">Section Title</label>
+                    <input type="text" id="industries_section_title" name="industries_section_title" class="form-input" 
+                        value="<?php echo htmlspecialchars($form_data['industries_section_title']); ?>" maxlength="100"
+                        placeholder="e.g., Industries We Serve">
+                    <p class="form-help">Max 100 characters</p>
+                </div>
+                <div class="form-group">
+                    <label for="industries_section_subtitle" class="form-label">Section Subtitle</label>
+                    <textarea id="industries_section_subtitle" name="industries_section_subtitle" class="form-textarea" rows="2"
+                        maxlength="255" placeholder="e.g., Trusted by leading organizations across diverse sectors"><?php echo htmlspecialchars($form_data['industries_section_subtitle']); ?></textarea>
+                    <p class="form-help">Max 255 characters</p>
+                </div>
+            </div>
+            
+            <div class="form-subsection">
+                <h3 class="form-subsection-title">Section Colors</h3>
+                <div class="form-row form-row-3">
+                    <div class="form-group">
+                        <label for="industries_section_bg_color" class="form-label">Background Color</label>
+                        <div class="color-input-wrapper">
+                            <input type="color" id="industries_section_bg_color" name="industries_section_bg_color" class="form-color-input" 
+                                value="<?php echo htmlspecialchars($form_data['industries_section_bg_color']); ?>">
+                            <input type="text" class="form-input color-hex-input" id="industries_section_bg_color_hex"
+                                value="<?php echo htmlspecialchars($form_data['industries_section_bg_color']); ?>" maxlength="7">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="industries_section_title_color" class="form-label">Title Color</label>
+                        <div class="color-input-wrapper">
+                            <input type="color" id="industries_section_title_color" name="industries_section_title_color" class="form-color-input" 
+                                value="<?php echo htmlspecialchars($form_data['industries_section_title_color']); ?>">
+                            <input type="text" class="form-input color-hex-input" id="industries_section_title_color_hex"
+                                value="<?php echo htmlspecialchars($form_data['industries_section_title_color']); ?>" maxlength="7">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="industries_section_subtitle_color" class="form-label">Subtitle Color</label>
+                        <div class="color-input-wrapper">
+                            <input type="color" id="industries_section_subtitle_color" name="industries_section_subtitle_color" class="form-color-input" 
+                                value="<?php echo htmlspecialchars($form_data['industries_section_subtitle_color']); ?>">
+                            <input type="text" class="form-input color-hex-input" id="industries_section_subtitle_color_hex"
+                                value="<?php echo htmlspecialchars($form_data['industries_section_subtitle_color']); ?>" maxlength="7">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-subsection">
+                <h3 class="form-subsection-title">Card Styling</h3>
+                <div class="form-row form-row-3">
+                    <div class="form-group">
+                        <label for="industries_section_card_overlay_color" class="form-label">Card Overlay</label>
+                        <input type="text" id="industries_section_card_overlay_color" name="industries_section_card_overlay_color" class="form-input" 
+                            value="<?php echo htmlspecialchars($form_data['industries_section_card_overlay_color']); ?>"
+                            placeholder="rgba(0,0,0,0.4)">
+                        <p class="form-help">Use rgba format</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="industries_section_card_title_color" class="form-label">Card Title Color</label>
+                        <div class="color-input-wrapper">
+                            <input type="color" id="industries_section_card_title_color" name="industries_section_card_title_color" class="form-color-input" 
+                                value="<?php echo htmlspecialchars($form_data['industries_section_card_title_color']); ?>">
+                            <input type="text" class="form-input color-hex-input" id="industries_section_card_title_color_hex"
+                                value="<?php echo htmlspecialchars($form_data['industries_section_card_title_color']); ?>" maxlength="7">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="industries_section_card_desc_color" class="form-label">Card Description</label>
+                        <input type="text" id="industries_section_card_desc_color" name="industries_section_card_desc_color" class="form-input" 
+                            value="<?php echo htmlspecialchars($form_data['industries_section_card_desc_color']); ?>"
+                            placeholder="rgba(255,255,255,0.9)">
+                        <p class="form-help">Use rgba format</p>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="industries_section_card_btn_bg_color" class="form-label">Button Background</label>
+                        <input type="text" id="industries_section_card_btn_bg_color" name="industries_section_card_btn_bg_color" class="form-input" 
+                            value="<?php echo htmlspecialchars($form_data['industries_section_card_btn_bg_color']); ?>"
+                            placeholder="rgba(255,255,255,0.2)">
+                        <p class="form-help">Use rgba format</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="industries_section_card_btn_text_color" class="form-label">Button Text Color</label>
+                        <div class="color-input-wrapper">
+                            <input type="color" id="industries_section_card_btn_text_color" name="industries_section_card_btn_text_color" class="form-color-input" 
+                                value="<?php echo htmlspecialchars($form_data['industries_section_card_btn_text_color']); ?>">
+                            <input type="text" class="form-input color-hex-input" id="industries_section_card_btn_text_color_hex"
+                                value="<?php echo htmlspecialchars($form_data['industries_section_card_btn_text_color']); ?>" maxlength="7">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="industries_cards" class="form-label">Industries Cards (JSON - max 10 cards)</label>
+                <textarea id="industries_cards" name="industries_cards" class="form-textarea form-textarea-code" rows="20" 
+                    placeholder='[
+  {
+    "title": "Technology",
+    "description": "Empowering tech companies with scalable solutions for rapid growth and innovation.",
+    "image_url": "https://images.unsplash.com/photo-1556740758-90de374c12ad?w=800&h=600&fit=crop",
+    "link_url": "/industries/technology",
+    "link_text": "Read More"
+  },
+  {
+    "title": "Healthcare",
+    "description": "Supporting healthcare providers with secure, compliant systems.",
+    "image_url": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=600&fit=crop",
+    "link_url": "/industries/healthcare",
+    "link_text": "Read More"
+  }
+]'><?php echo htmlspecialchars(json_encode($form_data['industries_cards'], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)); ?></textarea>
+                <p class="form-help">Each card requires: title, description, image_url, link_url, and link_text. Maximum 10 cards. Recommended image size: 800x600 pixels.</p>
+            </div>
+        </div>
+        
+        <!-- Testimonials Section -->
+        <div class="form-section">
+            <h2 class="form-section-title">Testimonials Section</h2>
+            <p class="form-section-desc">Customize the testimonials showcase section that displays customer reviews.</p>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="testimonials_section_theme" class="form-label">Theme / Mode</label>
+                    <select id="testimonials_section_theme" name="testimonials_section_theme" class="form-select">
+                        <option value="light" <?php echo ($form_data['testimonials_section_theme'] ?? 'light') === 'light' ? 'selected' : ''; ?>>Light</option>
+                        <option value="dark" <?php echo ($form_data['testimonials_section_theme'] ?? 'light') === 'dark' ? 'selected' : ''; ?>>Dark</option>
+                    </select>
+                    <p class="form-help">Choose between light or dark background theme</p>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="testimonials_section_heading" class="form-label">Section Heading</label>
+                <input type="text" id="testimonials_section_heading" name="testimonials_section_heading" class="form-input" 
+                    value="<?php echo htmlspecialchars($form_data['testimonials_section_heading']); ?>" maxlength="48"
+                    placeholder="e.g., What Our Customers Say">
+                <p class="form-help">Max 48 characters (<span id="testimonials_heading_count"><?php echo strlen($form_data['testimonials_section_heading']); ?></span>/48)</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="testimonials_section_subheading" class="form-label">Section Subheading</label>
+                <input type="text" id="testimonials_section_subheading" name="testimonials_section_subheading" class="form-input" 
+                    value="<?php echo htmlspecialchars($form_data['testimonials_section_subheading']); ?>" maxlength="120"
+                    placeholder="e.g., Trusted by leading businesses who have transformed their operations">
+                <p class="form-help">Max 120 characters (<span id="testimonials_subheading_count"><?php echo strlen($form_data['testimonials_section_subheading']); ?></span>/120)</p>
             </div>
         </div>
         
@@ -1281,6 +1550,22 @@ document.getElementById('hero_bg_pattern_opacity')?.addEventListener('input', fu
 // CTA Banner overlay intensity slider
 document.getElementById('cta_banner_overlay_intensity')?.addEventListener('input', function() {
     document.getElementById('cta_overlay_intensity_value').textContent = Math.round(this.value * 100) + '%';
+});
+
+// Testimonials section character counters
+document.getElementById('testimonials_section_heading')?.addEventListener('input', function() {
+    document.getElementById('testimonials_heading_count').textContent = this.value.length;
+});
+document.getElementById('testimonials_section_subheading')?.addEventListener('input', function() {
+    document.getElementById('testimonials_subheading_count').textContent = this.value.length;
+});
+
+// FAQs section character counters
+document.getElementById('faqs_section_heading')?.addEventListener('input', function() {
+    document.getElementById('faqs_heading_count').textContent = this.value.length;
+});
+document.getElementById('faqs_section_subheading')?.addEventListener('input', function() {
+    document.getElementById('faqs_subheading_count').textContent = this.value.length;
 });
 </script>
 

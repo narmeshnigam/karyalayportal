@@ -99,12 +99,36 @@ $form_data = [
     'cta_banner_button_bg_color' => '#FFFFFF',
     'cta_banner_button_text_color' => '#2563eb',
     
+    // Industries Section
+    'industries_section_enabled' => true,
+    'industries_section_title' => 'Industries We Serve',
+    'industries_section_subtitle' => 'Trusted by leading organizations across diverse sectors',
+    'industries_section_bg_color' => '#f8fafc',
+    'industries_section_title_color' => '#1a202c',
+    'industries_section_subtitle_color' => '#718096',
+    'industries_section_card_overlay_color' => 'rgba(0,0,0,0.4)',
+    'industries_section_card_title_color' => '#FFFFFF',
+    'industries_section_card_desc_color' => 'rgba(255,255,255,0.9)',
+    'industries_section_card_btn_bg_color' => 'rgba(255,255,255,0.2)',
+    'industries_section_card_btn_text_color' => '#FFFFFF',
+    
+    // Testimonials Section
+    'testimonials_section_theme' => 'light',
+    'testimonials_section_heading' => 'What Our Customers Say',
+    'testimonials_section_subheading' => 'Trusted by leading businesses who have transformed their operations with our solutions',
+    
+    // FAQs Section
+    'faqs_section_theme' => 'light',
+    'faqs_section_heading' => 'Frequently Asked Questions',
+    'faqs_section_subheading' => 'Everything you need to know about our solution. Can\'t find what you\'re looking for? Feel free to contact us.',
+    
     // Content fields (solution_content table)
     'features' => [],
     'screenshots' => [],
     'faqs' => [],
     'key_benefits_cards' => [],
-    'feature_showcase_cards' => []
+    'feature_showcase_cards' => [],
+    'industries_cards' => []
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -241,6 +265,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $errors[] = 'Feature showcase cards must be valid JSON format.';
             }
         }
+        
+        // Industries Section
+        $form_data['industries_section_enabled'] = isset($_POST['industries_section_enabled']);
+        $form_data['industries_section_title'] = sanitizeString($_POST['industries_section_title'] ?? 'Industries We Serve');
+        $form_data['industries_section_subtitle'] = sanitizeString($_POST['industries_section_subtitle'] ?? '');
+        $form_data['industries_section_bg_color'] = sanitizeString($_POST['industries_section_bg_color'] ?? '#f8fafc');
+        $form_data['industries_section_title_color'] = sanitizeString($_POST['industries_section_title_color'] ?? '#1a202c');
+        $form_data['industries_section_subtitle_color'] = sanitizeString($_POST['industries_section_subtitle_color'] ?? '#718096');
+        $form_data['industries_section_card_overlay_color'] = sanitizeString($_POST['industries_section_card_overlay_color'] ?? 'rgba(0,0,0,0.4)');
+        $form_data['industries_section_card_title_color'] = sanitizeString($_POST['industries_section_card_title_color'] ?? '#FFFFFF');
+        $form_data['industries_section_card_desc_color'] = sanitizeString($_POST['industries_section_card_desc_color'] ?? 'rgba(255,255,255,0.9)');
+        $form_data['industries_section_card_btn_bg_color'] = sanitizeString($_POST['industries_section_card_btn_bg_color'] ?? 'rgba(255,255,255,0.2)');
+        $form_data['industries_section_card_btn_text_color'] = sanitizeString($_POST['industries_section_card_btn_text_color'] ?? '#FFFFFF');
+        
+        if (!empty($_POST['industries_cards'])) {
+            $decoded = json_decode($_POST['industries_cards'], true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                $form_data['industries_cards'] = array_slice($decoded, 0, 10);
+            } else {
+                $errors[] = 'Industries cards must be valid JSON format.';
+            }
+        }
+        
+        // Process Testimonials Section fields
+        $form_data['testimonials_section_theme'] = in_array($_POST['testimonials_section_theme'] ?? 'light', ['light', 'dark']) 
+            ? $_POST['testimonials_section_theme'] 
+            : 'light';
+        $form_data['testimonials_section_heading'] = substr(sanitizeString($_POST['testimonials_section_heading'] ?? ''), 0, 48);
+        $form_data['testimonials_section_subheading'] = substr(sanitizeString($_POST['testimonials_section_subheading'] ?? ''), 0, 120);
+        
+        // Process FAQs Section fields
+        $form_data['faqs_section_theme'] = in_array($_POST['faqs_section_theme'] ?? 'light', ['light', 'dark']) 
+            ? $_POST['faqs_section_theme'] 
+            : 'light';
+        $form_data['faqs_section_heading'] = substr(sanitizeString($_POST['faqs_section_heading'] ?? ''), 0, 48);
+        $form_data['faqs_section_subheading'] = substr(sanitizeString($_POST['faqs_section_subheading'] ?? ''), 0, 120);
         
         if (empty($errors)) {
             $result = $contentService->create('solution', $form_data);
@@ -477,6 +537,98 @@ include_admin_header('Create Solution');
             <div class="form-group">
                 <label for="cta_banner_image_url" class="form-label">Background Image URL</label>
                 <input type="text" id="cta_banner_image_url" name="cta_banner_image_url" class="form-input" value="<?php echo htmlspecialchars($form_data['cta_banner_image_url']); ?>">
+            </div>
+        </div>
+        
+        <!-- Industries Gallery Section -->
+        <div class="form-section">
+            <h2 class="form-section-title">Industries Gallery Section</h2>
+            <div class="form-group">
+                <label class="form-checkbox-label">
+                    <input type="checkbox" name="industries_section_enabled" class="form-checkbox" <?php echo $form_data['industries_section_enabled'] ? 'checked' : ''; ?>>
+                    <span>Enable Industries Section</span>
+                </label>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="industries_section_title" class="form-label">Section Title</label>
+                    <input type="text" id="industries_section_title" name="industries_section_title" class="form-input" value="<?php echo htmlspecialchars($form_data['industries_section_title']); ?>">
+                </div>
+                <div class="form-group">
+                    <label for="industries_section_subtitle" class="form-label">Section Subtitle</label>
+                    <input type="text" id="industries_section_subtitle" name="industries_section_subtitle" class="form-input" value="<?php echo htmlspecialchars($form_data['industries_section_subtitle']); ?>">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="industries_cards" class="form-label">Industries Cards (JSON, max 10)</label>
+                <textarea id="industries_cards" name="industries_cards" class="form-textarea form-textarea-code" rows="10"><?php echo !empty($form_data['industries_cards']) ? htmlspecialchars(json_encode($form_data['industries_cards'], JSON_PRETTY_PRINT)) : ''; ?></textarea>
+                <p class="form-help">Format: [{"title": "...", "description": "...", "image_url": "...", "link_url": "...", "link_text": "Read More"}]</p>
+            </div>
+        </div>
+        
+        <!-- Testimonials Section -->
+        <div class="form-section">
+            <h2 class="form-section-title">Testimonials Section</h2>
+            <p class="form-section-desc">Customize the testimonials showcase section that displays customer reviews.</p>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="testimonials_section_theme" class="form-label">Theme / Mode</label>
+                    <select id="testimonials_section_theme" name="testimonials_section_theme" class="form-select">
+                        <option value="light" <?php echo ($form_data['testimonials_section_theme'] ?? 'light') === 'light' ? 'selected' : ''; ?>>Light</option>
+                        <option value="dark" <?php echo ($form_data['testimonials_section_theme'] ?? 'light') === 'dark' ? 'selected' : ''; ?>>Dark</option>
+                    </select>
+                    <p class="form-help">Choose between light or dark background theme</p>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="testimonials_section_heading" class="form-label">Section Heading</label>
+                <input type="text" id="testimonials_section_heading" name="testimonials_section_heading" class="form-input" 
+                    value="<?php echo htmlspecialchars($form_data['testimonials_section_heading']); ?>" maxlength="48"
+                    placeholder="e.g., What Our Customers Say">
+                <p class="form-help">Max 48 characters</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="testimonials_section_subheading" class="form-label">Section Subheading</label>
+                <input type="text" id="testimonials_section_subheading" name="testimonials_section_subheading" class="form-input" 
+                    value="<?php echo htmlspecialchars($form_data['testimonials_section_subheading']); ?>" maxlength="120"
+                    placeholder="e.g., Trusted by leading businesses who have transformed their operations">
+                <p class="form-help">Max 120 characters</p>
+            </div>
+        </div>
+        
+        <!-- FAQs Section -->
+        <div class="form-section">
+            <h2 class="form-section-title">FAQs Section</h2>
+            <p class="form-section-desc">Customize the FAQs section appearance on the solution detail page.</p>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="faqs_section_theme" class="form-label">Theme / Mode</label>
+                    <select id="faqs_section_theme" name="faqs_section_theme" class="form-select">
+                        <option value="light" <?php echo ($form_data['faqs_section_theme'] ?? 'light') === 'light' ? 'selected' : ''; ?>>Light</option>
+                        <option value="dark" <?php echo ($form_data['faqs_section_theme'] ?? 'light') === 'dark' ? 'selected' : ''; ?>>Dark</option>
+                    </select>
+                    <p class="form-help">Choose between light or dark background theme</p>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="faqs_section_heading" class="form-label">Section Heading</label>
+                <input type="text" id="faqs_section_heading" name="faqs_section_heading" class="form-input" 
+                    value="<?php echo htmlspecialchars($form_data['faqs_section_heading']); ?>" maxlength="48"
+                    placeholder="e.g., Frequently Asked Questions">
+                <p class="form-help">Max 48 characters</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="faqs_section_subheading" class="form-label">Section Subheading</label>
+                <input type="text" id="faqs_section_subheading" name="faqs_section_subheading" class="form-input" 
+                    value="<?php echo htmlspecialchars($form_data['faqs_section_subheading']); ?>" maxlength="120"
+                    placeholder="e.g., Everything you need to know about our solution">
+                <p class="form-help">Max 120 characters</p>
             </div>
         </div>
         

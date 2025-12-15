@@ -92,6 +92,7 @@ try {
             $post['tags'] = json_decode($post['tags'], true);
         }
     }
+    unset($post); // Break the reference to prevent duplicate rendering
     
 } catch (PDOException $e) {
     error_log("Blog posts list error: " . $e->getMessage());

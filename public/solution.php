@@ -559,141 +559,87 @@ $ctaBannerButtonTextColor = $solution['cta_banner_button_text_color'] ?? '#2563e
 <?php endif; ?>
 
 <!-- Industries Gallery Section - Horizontal Scroll on Sticky -->
-<section class="sol-industries-gallery" id="industries-gallery">
+<?php 
+$industriesSectionEnabled = $solution['industries_section_enabled'] ?? true;
+$industriesCards = $solution['industries_cards'] ?? [];
+
+// Default industries cards if none are set
+if (empty($industriesCards)) {
+    $industriesCards = [
+        ['title' => 'Technology', 'description' => 'Empowering tech companies with scalable solutions for rapid growth and innovation in the digital landscape.', 'image_url' => 'https://images.unsplash.com/photo-1556740758-90de374c12ad?w=800&h=600&fit=crop', 'link_url' => '/industries/technology', 'link_text' => 'Read More'],
+        ['title' => 'Healthcare', 'description' => 'Supporting healthcare providers with secure, compliant systems that enhance patient care and operational efficiency.', 'image_url' => 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=600&fit=crop', 'link_url' => '/industries/healthcare', 'link_text' => 'Read More'],
+        ['title' => 'Finance', 'description' => 'Delivering robust financial solutions with enterprise-grade security and real-time transaction processing capabilities.', 'image_url' => 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=600&fit=crop', 'link_url' => '/industries/finance', 'link_text' => 'Read More'],
+        ['title' => 'Retail', 'description' => 'Transforming retail experiences with seamless omnichannel solutions and intelligent inventory management systems.', 'image_url' => 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=600&fit=crop', 'link_url' => '/industries/retail', 'link_text' => 'Read More'],
+        ['title' => 'Education', 'description' => 'Enabling educational institutions with modern learning platforms and comprehensive student management tools.', 'image_url' => 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&h=600&fit=crop', 'link_url' => '/industries/education', 'link_text' => 'Read More'],
+        ['title' => 'Manufacturing', 'description' => 'Optimizing production workflows with IoT-enabled systems and predictive maintenance for maximum efficiency.', 'image_url' => 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&h=600&fit=crop', 'link_url' => '/industries/manufacturing', 'link_text' => 'Read More'],
+        ['title' => 'Logistics', 'description' => 'Streamlining supply chain operations with real-time tracking and automated route optimization solutions.', 'image_url' => 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=600&fit=crop', 'link_url' => '/industries/logistics', 'link_text' => 'Read More'],
+        ['title' => 'Hospitality', 'description' => 'Enhancing guest experiences with integrated booking systems and personalized service management platforms.', 'image_url' => 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=800&h=600&fit=crop', 'link_url' => '/industries/hospitality', 'link_text' => 'Read More']
+    ];
+}
+
+// Industries section styling
+$industriesBgColor = $solution['industries_section_bg_color'] ?? '#f8fafc';
+$industriesTitleColor = $solution['industries_section_title_color'] ?? '#1a202c';
+$industriesSubtitleColor = $solution['industries_section_subtitle_color'] ?? '#718096';
+$industriesCardOverlayColor = $solution['industries_section_card_overlay_color'] ?? 'rgba(0,0,0,0.4)';
+$industriesCardTitleColor = $solution['industries_section_card_title_color'] ?? '#FFFFFF';
+$industriesCardDescColor = $solution['industries_section_card_desc_color'] ?? 'rgba(255,255,255,0.9)';
+$industriesCardBtnBgColor = $solution['industries_section_card_btn_bg_color'] ?? 'rgba(255,255,255,0.2)';
+$industriesCardBtnTextColor = $solution['industries_section_card_btn_text_color'] ?? '#FFFFFF';
+$industriesSectionTitle = $solution['industries_section_title'] ?? 'Industries We Serve';
+$industriesSectionSubtitle = $solution['industries_section_subtitle'] ?? 'Trusted by leading organizations across diverse sectors';
+?>
+<?php if ($industriesSectionEnabled && !empty($industriesCards)): ?>
+<section class="sol-industries-gallery" id="industries-gallery" style="
+    --industries-bg-color: <?php echo htmlspecialchars($industriesBgColor); ?>;
+    --industries-title-color: <?php echo htmlspecialchars($industriesTitleColor); ?>;
+    --industries-subtitle-color: <?php echo htmlspecialchars($industriesSubtitleColor); ?>;
+    --industries-card-overlay: <?php echo htmlspecialchars($industriesCardOverlayColor); ?>;
+    --industries-card-title: <?php echo htmlspecialchars($industriesCardTitleColor); ?>;
+    --industries-card-desc: <?php echo htmlspecialchars($industriesCardDescColor); ?>;
+    --industries-card-btn-bg: <?php echo htmlspecialchars($industriesCardBtnBgColor); ?>;
+    --industries-card-btn-text: <?php echo htmlspecialchars($industriesCardBtnTextColor); ?>;
+">
     <div class="sol-industries-sticky-wrapper">
         <div class="container">
             <div class="sol-industries-header">
-                <h2 class="sol-industries-title">Industries We Serve</h2>
-                <p class="sol-industries-subtitle">Trusted by leading organizations across diverse sectors</p>
+                <h2 class="sol-industries-title"><?php echo htmlspecialchars($industriesSectionTitle); ?></h2>
+                <p class="sol-industries-subtitle"><?php echo htmlspecialchars($industriesSectionSubtitle); ?></p>
             </div>
         </div>
         
         <div class="sol-industries-scroll-container">
             <div class="sol-industries-track">
-                <!-- Industry Card 1 -->
+                <?php foreach ($industriesCards as $card): ?>
                 <div class="sol-industry-card">
-                    <img src="https://images.unsplash.com/photo-1556740758-90de374c12ad?w=800&h=600&fit=crop" alt="Technology" class="sol-industry-image">
+                    <img src="<?php echo htmlspecialchars($card['image_url'] ?? ''); ?>" alt="<?php echo htmlspecialchars($card['title'] ?? ''); ?>" class="sol-industry-image">
                     <div class="sol-industry-overlay"></div>
                     <div class="sol-industry-content">
-                        <h3 class="sol-industry-title">Technology</h3>
-                        <p class="sol-industry-description">Empowering tech companies with scalable solutions for rapid growth and innovation in the digital landscape.</p>
-                        <a href="<?php echo get_base_url(); ?>/industries/technology" class="sol-industry-btn">
-                            Read More
+                        <h3 class="sol-industry-title"><?php echo htmlspecialchars($card['title'] ?? ''); ?></h3>
+                        <p class="sol-industry-description"><?php echo htmlspecialchars($card['description'] ?? ''); ?></p>
+                        <?php if (!empty($card['link_url'])): ?>
+                        <a href="<?php echo htmlspecialchars(strpos($card['link_url'], 'http') === 0 ? $card['link_url'] : get_base_url() . $card['link_url']); ?>" class="sol-industry-btn">
+                            <?php echo htmlspecialchars($card['link_text'] ?? 'Read More'); ?>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                         </a>
+                        <?php endif; ?>
                     </div>
                 </div>
-                
-                <!-- Industry Card 2 -->
-                <div class="sol-industry-card">
-                    <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=600&fit=crop" alt="Healthcare" class="sol-industry-image">
-                    <div class="sol-industry-overlay"></div>
-                    <div class="sol-industry-content">
-                        <h3 class="sol-industry-title">Healthcare</h3>
-                        <p class="sol-industry-description">Supporting healthcare providers with secure, compliant systems that enhance patient care and operational efficiency.</p>
-                        <a href="<?php echo get_base_url(); ?>/industries/healthcare" class="sol-industry-btn">
-                            Read More
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- Industry Card 3 -->
-                <div class="sol-industry-card">
-                    <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=600&fit=crop" alt="Finance" class="sol-industry-image">
-                    <div class="sol-industry-overlay"></div>
-                    <div class="sol-industry-content">
-                        <h3 class="sol-industry-title">Finance</h3>
-                        <p class="sol-industry-description">Delivering robust financial solutions with enterprise-grade security and real-time transaction processing capabilities.</p>
-                        <a href="<?php echo get_base_url(); ?>/industries/finance" class="sol-industry-btn">
-                            Read More
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- Industry Card 4 -->
-                <div class="sol-industry-card">
-                    <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=600&fit=crop" alt="Retail" class="sol-industry-image">
-                    <div class="sol-industry-overlay"></div>
-                    <div class="sol-industry-content">
-                        <h3 class="sol-industry-title">Retail</h3>
-                        <p class="sol-industry-description">Transforming retail experiences with seamless omnichannel solutions and intelligent inventory management systems.</p>
-                        <a href="<?php echo get_base_url(); ?>/industries/retail" class="sol-industry-btn">
-                            Read More
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- Industry Card 5 -->
-                <div class="sol-industry-card">
-                    <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&h=600&fit=crop" alt="Education" class="sol-industry-image">
-                    <div class="sol-industry-overlay"></div>
-                    <div class="sol-industry-content">
-                        <h3 class="sol-industry-title">Education</h3>
-                        <p class="sol-industry-description">Enabling educational institutions with modern learning platforms and comprehensive student management tools.</p>
-                        <a href="<?php echo get_base_url(); ?>/industries/education" class="sol-industry-btn">
-                            Read More
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- Industry Card 6 -->
-                <div class="sol-industry-card">
-                    <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&h=600&fit=crop" alt="Manufacturing" class="sol-industry-image">
-                    <div class="sol-industry-overlay"></div>
-                    <div class="sol-industry-content">
-                        <h3 class="sol-industry-title">Manufacturing</h3>
-                        <p class="sol-industry-description">Optimizing production workflows with IoT-enabled systems and predictive maintenance for maximum efficiency.</p>
-                        <a href="<?php echo get_base_url(); ?>/industries/manufacturing" class="sol-industry-btn">
-                            Read More
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- Industry Card 7 -->
-                <div class="sol-industry-card">
-                    <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&h=600&fit=crop" alt="Logistics" class="sol-industry-image">
-                    <div class="sol-industry-overlay"></div>
-                    <div class="sol-industry-content">
-                        <h3 class="sol-industry-title">Logistics</h3>
-                        <p class="sol-industry-description">Streamlining supply chain operations with real-time tracking and automated route optimization solutions.</p>
-                        <a href="<?php echo get_base_url(); ?>/industries/logistics" class="sol-industry-btn">
-                            Read More
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- Industry Card 8 -->
-                <div class="sol-industry-card">
-                    <img src="https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=800&h=600&fit=crop" alt="Hospitality" class="sol-industry-image">
-                    <div class="sol-industry-overlay"></div>
-                    <div class="sol-industry-content">
-                        <h3 class="sol-industry-title">Hospitality</h3>
-                        <p class="sol-industry-description">Enhancing guest experiences with integrated booking systems and personalized service management platforms.</p>
-                        <a href="<?php echo get_base_url(); ?>/industries/hospitality" class="sol-industry-btn">
-                            Read More
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                        </a>
-                    </div>
-                </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </div>
 </section>
+<?php endif; ?>
 
 <!-- Testimonials Showcase Section -->
 <?php if (!empty($testimonials)): ?>
 <?php
 $testimonials_config = [
     'testimonials' => $testimonials,
-    'title' => 'What Our Customers Say',
-    'subtitle' => 'Trusted by leading businesses who have transformed their operations with our solutions',
-    'theme' => 'light',
+    'title' => $solution['testimonials_section_heading'] ?? 'What Our Customers Say',
+    'subtitle' => $solution['testimonials_section_subheading'] ?? 'Trusted by leading businesses who have transformed their operations with our solutions',
+    'theme' => $solution['testimonials_section_theme'] ?? 'light',
     'max_items' => 6,
     'accent_color' => $colorTheme
 ];
@@ -702,8 +648,12 @@ include __DIR__ . '/../templates/components/testimonials-showcase.php';
 <?php endif; ?>
 
 <!-- FAQs Section - Professional Design (Dark Mode) -->
-<?php if (!empty($solution['faqs'])): ?>
-<section class="sol-faqs sol-faqs-light" style="--theme-color: <?php echo htmlspecialchars($colorTheme); ?>;">
+<?php if (!empty($solution['faqs'])): 
+    $faqsTheme = $solution['faqs_section_theme'] ?? 'light';
+    $faqsHeading = $solution['faqs_section_heading'] ?? 'Frequently Asked Questions';
+    $faqsSubheading = $solution['faqs_section_subheading'] ?? 'Everything you need to know about our solution. Can\'t find what you\'re looking for? Feel free to contact us.';
+?>
+<section class="sol-faqs sol-faqs-<?php echo htmlspecialchars($faqsTheme); ?>" style="--theme-color: <?php echo htmlspecialchars($colorTheme); ?>;">
     <div class="sol-faqs-bg">
         <div class="sol-faqs-gradient"></div>
         <div class="sol-faqs-pattern"></div>
@@ -715,8 +665,8 @@ include __DIR__ . '/../templates/components/testimonials-showcase.php';
             <!-- Left Side - Header & Decoration -->
             <div class="sol-faqs-sidebar">
                 <div class="sol-faqs-sidebar-content">
-                    <h2 class="sol-faqs-title">Frequently Asked<br>Questions</h2>
-                    <p class="sol-faqs-subtitle">Everything you need to know about our solution. Can't find what you're looking for? Feel free to contact us.</p>
+                    <h2 class="sol-faqs-title"><?php echo nl2br(htmlspecialchars($faqsHeading)); ?></h2>
+                    <p class="sol-faqs-subtitle"><?php echo htmlspecialchars($faqsSubheading); ?></p>
                     <a href="#contact-form" class="sol-faqs-contact-btn">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>

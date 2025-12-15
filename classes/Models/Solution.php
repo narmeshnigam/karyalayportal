@@ -46,11 +46,20 @@ class Solution
         'feature_showcase_card_heading_color', 'feature_showcase_card_text_color', 'feature_showcase_card_icon_color',
         'cta_banner_enabled', 'cta_banner_image_url', 'cta_banner_overlay_color', 'cta_banner_overlay_intensity',
         'cta_banner_heading1', 'cta_banner_heading2', 'cta_banner_heading_color',
-        'cta_banner_button_text', 'cta_banner_button_link', 'cta_banner_button_bg_color', 'cta_banner_button_text_color'
+        'cta_banner_button_text', 'cta_banner_button_link', 'cta_banner_button_bg_color', 'cta_banner_button_text_color',
+        // Industries Section Styling
+        'industries_section_enabled', 'industries_section_title', 'industries_section_subtitle',
+        'industries_section_bg_color', 'industries_section_title_color', 'industries_section_subtitle_color',
+        'industries_section_card_overlay_color', 'industries_section_card_title_color', 'industries_section_card_desc_color',
+        'industries_section_card_btn_bg_color', 'industries_section_card_btn_text_color',
+        // Testimonials Section Styling
+        'testimonials_section_theme', 'testimonials_section_heading', 'testimonials_section_subheading',
+        // FAQs Section Styling
+        'faqs_section_theme', 'faqs_section_heading', 'faqs_section_subheading'
     ];
 
     private array $contentFields = [
-        'features', 'screenshots', 'faqs', 'key_benefits_cards', 'feature_showcase_cards'
+        'features', 'screenshots', 'faqs', 'key_benefits_cards', 'feature_showcase_cards', 'industries_cards'
     ];
 
     public function __construct()
@@ -147,7 +156,13 @@ class Solution
             feature_showcase_card_heading_color, feature_showcase_card_text_color, feature_showcase_card_icon_color,
             cta_banner_enabled, cta_banner_image_url, cta_banner_overlay_color, cta_banner_overlay_intensity,
             cta_banner_heading1, cta_banner_heading2, cta_banner_heading_color,
-            cta_banner_button_text, cta_banner_button_link, cta_banner_button_bg_color, cta_banner_button_text_color
+            cta_banner_button_text, cta_banner_button_link, cta_banner_button_bg_color, cta_banner_button_text_color,
+            industries_section_enabled, industries_section_title, industries_section_subtitle,
+            industries_section_bg_color, industries_section_title_color, industries_section_subtitle_color,
+            industries_section_card_overlay_color, industries_section_card_title_color, industries_section_card_desc_color,
+            industries_section_card_btn_bg_color, industries_section_card_btn_text_color,
+            testimonials_section_theme, testimonials_section_heading, testimonials_section_subheading,
+            faqs_section_theme, faqs_section_heading, faqs_section_subheading
         ) VALUES (
             :id, :solution_id,
             :hero_badge, :hero_title_text, :hero_title_color, :hero_subtitle_color,
@@ -169,7 +184,13 @@ class Solution
             :feature_showcase_card_heading_color, :feature_showcase_card_text_color, :feature_showcase_card_icon_color,
             :cta_banner_enabled, :cta_banner_image_url, :cta_banner_overlay_color, :cta_banner_overlay_intensity,
             :cta_banner_heading1, :cta_banner_heading2, :cta_banner_heading_color,
-            :cta_banner_button_text, :cta_banner_button_link, :cta_banner_button_bg_color, :cta_banner_button_text_color
+            :cta_banner_button_text, :cta_banner_button_link, :cta_banner_button_bg_color, :cta_banner_button_text_color,
+            :industries_section_enabled, :industries_section_title, :industries_section_subtitle,
+            :industries_section_bg_color, :industries_section_title_color, :industries_section_subtitle_color,
+            :industries_section_card_overlay_color, :industries_section_card_title_color, :industries_section_card_desc_color,
+            :industries_section_card_btn_bg_color, :industries_section_card_btn_text_color,
+            :testimonials_section_theme, :testimonials_section_heading, :testimonials_section_subheading,
+            :faqs_section_theme, :faqs_section_heading, :faqs_section_subheading
         )";
 
         $stmt = $this->db->prepare($sql);
@@ -233,16 +254,36 @@ class Solution
             ':cta_banner_button_text' => $data['cta_banner_button_text'] ?? 'Explore ERP Solutions',
             ':cta_banner_button_link' => $data['cta_banner_button_link'] ?? '#contact-form',
             ':cta_banner_button_bg_color' => $data['cta_banner_button_bg_color'] ?? '#FFFFFF',
-            ':cta_banner_button_text_color' => $data['cta_banner_button_text_color'] ?? '#2563eb'
+            ':cta_banner_button_text_color' => $data['cta_banner_button_text_color'] ?? '#2563eb',
+            // Industries Section
+            ':industries_section_enabled' => $data['industries_section_enabled'] ?? true,
+            ':industries_section_title' => $data['industries_section_title'] ?? 'Industries We Serve',
+            ':industries_section_subtitle' => $data['industries_section_subtitle'] ?? 'Trusted by leading organizations across diverse sectors',
+            ':industries_section_bg_color' => $data['industries_section_bg_color'] ?? '#f8fafc',
+            ':industries_section_title_color' => $data['industries_section_title_color'] ?? '#1a202c',
+            ':industries_section_subtitle_color' => $data['industries_section_subtitle_color'] ?? '#718096',
+            ':industries_section_card_overlay_color' => $data['industries_section_card_overlay_color'] ?? 'rgba(0,0,0,0.4)',
+            ':industries_section_card_title_color' => $data['industries_section_card_title_color'] ?? '#FFFFFF',
+            ':industries_section_card_desc_color' => $data['industries_section_card_desc_color'] ?? 'rgba(255,255,255,0.9)',
+            ':industries_section_card_btn_bg_color' => $data['industries_section_card_btn_bg_color'] ?? 'rgba(255,255,255,0.2)',
+            ':industries_section_card_btn_text_color' => $data['industries_section_card_btn_text_color'] ?? '#FFFFFF',
+            // Testimonials Section
+            ':testimonials_section_theme' => $data['testimonials_section_theme'] ?? 'light',
+            ':testimonials_section_heading' => isset($data['testimonials_section_heading']) ? substr($data['testimonials_section_heading'], 0, 48) : 'What Our Customers Say',
+            ':testimonials_section_subheading' => isset($data['testimonials_section_subheading']) ? substr($data['testimonials_section_subheading'], 0, 120) : 'Trusted by leading businesses who have transformed their operations with our solutions',
+            // FAQs Section
+            ':faqs_section_theme' => $data['faqs_section_theme'] ?? 'light',
+            ':faqs_section_heading' => isset($data['faqs_section_heading']) ? substr($data['faqs_section_heading'], 0, 48) : 'Frequently Asked Questions',
+            ':faqs_section_subheading' => isset($data['faqs_section_subheading']) ? substr($data['faqs_section_subheading'], 0, 120) : 'Everything you need to know about our solution. Can\'t find what you\'re looking for? Feel free to contact us.'
         ]);
     }
 
     private function insertContent(string $solutionId, array $data): void
     {
         $sql = "INSERT INTO solution_content (
-            id, solution_id, features, screenshots, faqs, key_benefits_cards, feature_showcase_cards
+            id, solution_id, features, screenshots, faqs, key_benefits_cards, feature_showcase_cards, industries_cards
         ) VALUES (
-            :id, :solution_id, :features, :screenshots, :faqs, :key_benefits_cards, :feature_showcase_cards
+            :id, :solution_id, :features, :screenshots, :faqs, :key_benefits_cards, :feature_showcase_cards, :industries_cards
         )";
 
         $stmt = $this->db->prepare($sql);
@@ -253,7 +294,8 @@ class Solution
             ':screenshots' => isset($data['screenshots']) ? json_encode($data['screenshots']) : null,
             ':faqs' => isset($data['faqs']) ? json_encode($data['faqs']) : null,
             ':key_benefits_cards' => isset($data['key_benefits_cards']) ? json_encode($data['key_benefits_cards']) : null,
-            ':feature_showcase_cards' => isset($data['feature_showcase_cards']) ? json_encode($data['feature_showcase_cards']) : null
+            ':feature_showcase_cards' => isset($data['feature_showcase_cards']) ? json_encode($data['feature_showcase_cards']) : null,
+            ':industries_cards' => isset($data['industries_cards']) ? json_encode($data['industries_cards']) : null
         ]);
     }
 
@@ -285,7 +327,13 @@ class Solution
                     st.cta_banner_enabled, st.cta_banner_image_url, st.cta_banner_overlay_color, st.cta_banner_overlay_intensity,
                     st.cta_banner_heading1, st.cta_banner_heading2, st.cta_banner_heading_color,
                     st.cta_banner_button_text, st.cta_banner_button_link, st.cta_banner_button_bg_color, st.cta_banner_button_text_color,
-                    sc.features, sc.screenshots, sc.faqs, sc.key_benefits_cards, sc.feature_showcase_cards
+                    st.industries_section_enabled, st.industries_section_title, st.industries_section_subtitle,
+                    st.industries_section_bg_color, st.industries_section_title_color, st.industries_section_subtitle_color,
+                    st.industries_section_card_overlay_color, st.industries_section_card_title_color, st.industries_section_card_desc_color,
+                    st.industries_section_card_btn_bg_color, st.industries_section_card_btn_text_color,
+                    st.testimonials_section_theme, st.testimonials_section_heading, st.testimonials_section_subheading,
+                    st.faqs_section_theme, st.faqs_section_heading, st.faqs_section_subheading,
+                    sc.features, sc.screenshots, sc.faqs, sc.key_benefits_cards, sc.feature_showcase_cards, sc.industries_cards
                 FROM solutions s
                 LEFT JOIN solution_styling st ON s.id = st.solution_id
                 LEFT JOIN solution_content sc ON s.id = sc.solution_id
@@ -334,7 +382,13 @@ class Solution
                     st.cta_banner_enabled, st.cta_banner_image_url, st.cta_banner_overlay_color, st.cta_banner_overlay_intensity,
                     st.cta_banner_heading1, st.cta_banner_heading2, st.cta_banner_heading_color,
                     st.cta_banner_button_text, st.cta_banner_button_link, st.cta_banner_button_bg_color, st.cta_banner_button_text_color,
-                    sc.features, sc.screenshots, sc.faqs, sc.key_benefits_cards, sc.feature_showcase_cards
+                    st.industries_section_enabled, st.industries_section_title, st.industries_section_subtitle,
+                    st.industries_section_bg_color, st.industries_section_title_color, st.industries_section_subtitle_color,
+                    st.industries_section_card_overlay_color, st.industries_section_card_title_color, st.industries_section_card_desc_color,
+                    st.industries_section_card_btn_bg_color, st.industries_section_card_btn_text_color,
+                    st.testimonials_section_theme, st.testimonials_section_heading, st.testimonials_section_subheading,
+                    st.faqs_section_theme, st.faqs_section_heading, st.faqs_section_subheading,
+                    sc.features, sc.screenshots, sc.faqs, sc.key_benefits_cards, sc.feature_showcase_cards, sc.industries_cards
                 FROM solutions s
                 LEFT JOIN solution_styling st ON s.id = st.solution_id
                 LEFT JOIN solution_content sc ON s.id = sc.solution_id
@@ -412,7 +466,8 @@ class Solution
             'pricing_note', 'meta_title', 'meta_description', 'meta_keywords',
             'hero_bg_gradient_color', 'key_benefits_section_heading1', 'key_benefits_section_heading2',
             'key_benefits_section_subheading', 'feature_showcase_section_title', 'feature_showcase_section_subtitle',
-            'cta_banner_image_url', 'cta_banner_heading1', 'cta_banner_heading2', 'cta_banner_button_text', 'cta_banner_button_link'
+            'cta_banner_image_url', 'cta_banner_heading1', 'cta_banner_heading2', 'cta_banner_button_text', 'cta_banner_button_link',
+            'testimonials_section_heading', 'testimonials_section_subheading'
         ];
         
         $updateFields = [];
@@ -498,7 +553,12 @@ class Solution
                     st.cta_banner_enabled, st.cta_banner_image_url, st.cta_banner_overlay_color, st.cta_banner_overlay_intensity,
                     st.cta_banner_heading1, st.cta_banner_heading2, st.cta_banner_heading_color,
                     st.cta_banner_button_text, st.cta_banner_button_link, st.cta_banner_button_bg_color, st.cta_banner_button_text_color,
-                    sc.features, sc.screenshots, sc.faqs, sc.key_benefits_cards, sc.feature_showcase_cards
+                    st.industries_section_enabled, st.industries_section_title, st.industries_section_subtitle,
+                    st.industries_section_bg_color, st.industries_section_title_color, st.industries_section_subtitle_color,
+                    st.industries_section_card_overlay_color, st.industries_section_card_title_color, st.industries_section_card_desc_color,
+                    st.industries_section_card_btn_bg_color, st.industries_section_card_btn_text_color,
+                    st.testimonials_section_theme, st.testimonials_section_heading, st.testimonials_section_subheading,
+                    sc.features, sc.screenshots, sc.faqs, sc.key_benefits_cards, sc.feature_showcase_cards, sc.industries_cards
                 FROM solutions s
                 LEFT JOIN solution_styling st ON s.id = st.solution_id
                 LEFT JOIN solution_content sc ON s.id = sc.solution_id
@@ -595,7 +655,7 @@ class Solution
     private function decodeJsonFields(array $data): array
     {
         $jsonFields = [
-            'features', 'screenshots', 'faqs', 'key_benefits_cards', 'feature_showcase_cards'
+            'features', 'screenshots', 'faqs', 'key_benefits_cards', 'feature_showcase_cards', 'industries_cards'
         ];
         
         foreach ($jsonFields as $field) {

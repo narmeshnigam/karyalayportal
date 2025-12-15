@@ -64,7 +64,7 @@ try {
         $params[':search'] = '%' . $search_query . '%';
     }
     
-    $sql .= " ORDER BY s.display_order ASC, s.created_at DESC LIMIT :limit OFFSET :offset";
+    $sql .= " GROUP BY s.id ORDER BY s.display_order ASC, s.created_at DESC LIMIT :limit OFFSET :offset";
     
     $stmt = $db->prepare($sql);
     
@@ -88,6 +88,7 @@ try {
             $solution['faqs'] = json_decode($solution['faqs'], true);
         }
     }
+    unset($solution); // Break the reference to prevent duplicate rendering
     
 } catch (PDOException $e) {
     error_log("Solutions list error: " . $e->getMessage());

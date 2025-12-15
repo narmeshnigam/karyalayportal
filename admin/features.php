@@ -96,6 +96,7 @@ try {
             $feature['screenshots'] = json_decode($feature['screenshots'], true);
         }
     }
+    unset($feature); // Break the reference to prevent duplicate rendering
     
 } catch (PDOException $e) {
     error_log("Features list error: " . $e->getMessage());

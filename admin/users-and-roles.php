@@ -122,6 +122,7 @@ if (empty($admin_users) && $total_users === 0) {
         foreach ($admin_users as &$user) {
             $user['roles'] = $user['role'];
         }
+        unset($user); // Break the reference to prevent duplicate rendering
         
         // Count for legacy
         $count_sql = "SELECT COUNT(*) FROM users WHERE role IN ('ADMIN', 'SUPPORT', 'SALES', 'CONTENT_EDITOR', 'INFRASTRUCTURE', 'SALES_MANAGER', 'OPERATIONS', 'CONTENT_MANAGER')";

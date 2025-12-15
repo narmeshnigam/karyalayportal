@@ -96,6 +96,7 @@ try {
             $module['faqs'] = json_decode($module['faqs'], true);
         }
     }
+    unset($module); // Break the reference to prevent duplicate rendering
     
 } catch (PDOException $e) {
     error_log("Modules list error: " . $e->getMessage());
