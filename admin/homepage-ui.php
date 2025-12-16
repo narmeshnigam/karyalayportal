@@ -4,10 +4,10 @@
  * Manage UI components on the homepage including Powerful Solutions section
  */
 
-require_once __DIR__ . '/../../config/bootstrap.php';
-require_once __DIR__ . '/../../includes/auth_helpers.php';
-require_once __DIR__ . '/../../includes/admin_helpers.php';
-require_once __DIR__ . '/../../includes/template_helpers.php';
+require_once __DIR__ . '/../config/bootstrap.php';
+require_once __DIR__ . '/../includes/auth_helpers.php';
+require_once __DIR__ . '/../includes/admin_helpers.php';
+require_once __DIR__ . '/../includes/template_helpers.php';
 
 use Karyalay\Models\Setting;
 use Karyalay\Middleware\CsrfMiddleware;
@@ -343,14 +343,6 @@ include_admin_header('Homepage UI Settings');
 </div>
 
 <?php $base_url = get_app_base_url(); ?>
-<!-- Settings Navigation -->
-<div class="settings-nav">
-    <a href="<?php echo $base_url; ?>/admin/settings/general.php" class="settings-nav-item">General</a>
-    <a href="<?php echo $base_url; ?>/admin/settings/branding.php" class="settings-nav-item">Branding</a>
-    <a href="<?php echo $base_url; ?>/admin/settings/seo.php" class="settings-nav-item">SEO</a>
-    <a href="<?php echo $base_url; ?>/admin/settings/legal-identity.php" class="settings-nav-item">Legal Identity</a>
-    <a href="<?php echo $base_url; ?>/admin/settings/homepage-ui.php" class="settings-nav-item active">Homepage UI</a>
-</div>
 
 <?php if ($success_message): ?>
     <div class="alert alert-success"><?php echo htmlspecialchars($success_message); ?></div>
@@ -362,7 +354,7 @@ include_admin_header('Homepage UI Settings');
 
 <!-- Homepage UI Settings Form -->
 <div class="admin-card">
-    <form method="POST" action="<?php echo $base_url; ?>/admin/settings/homepage-ui.php" class="admin-form">
+    <form method="POST" action="<?php echo $base_url; ?>/admin/homepage-ui.php" class="admin-form">
         <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
         
         <!-- Powerful Solutions Section -->

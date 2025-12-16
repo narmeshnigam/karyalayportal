@@ -55,7 +55,8 @@ if (strpos($request_uri, '/admin/solutions') !== false || strpos($request_uri, '
     strpos($request_uri, '/admin/client-logos') !== false || strpos($request_uri, '/admin/why-choose-cards') !== false || 
     strpos($request_uri, '/admin/faqs') !== false || strpos($request_uri, '/admin/faq-') !== false || 
     strpos($request_uri, '/admin/testimonials') !== false || strpos($request_uri, '/admin/about-page') !== false || 
-    strpos($request_uri, '/admin/legal') !== false || strpos($request_uri, '/admin/business-hub') !== false) {
+    strpos($request_uri, '/admin/legal') !== false || strpos($request_uri, '/admin/business-hub') !== false ||
+    strpos($request_uri, '/admin/homepage-ui') !== false) {
     $current_section = 'content';
 } elseif (strpos($request_uri, '/admin/plans') !== false || strpos($request_uri, '/admin/orders') !== false || strpos($request_uri, '/admin/invoices') !== false) {
     $current_section = 'billing';
@@ -97,6 +98,7 @@ $menu_sections = [
         'title' => 'Content',
         'items' => [
             ['url' => '/admin/hero-slides.php', 'label' => 'Hero Slides', 'permission' => 'hero_slides.manage', 'section' => 'content', 'match' => '/hero-slides'],
+            ['url' => '/admin/homepage-ui.php', 'label' => 'Homepage UI', 'permission' => 'settings.general', 'section' => 'content', 'match' => '/homepage-ui'],
             ['url' => '/admin/client-logos.php', 'label' => 'Client Logos', 'permission' => 'client_logos.manage', 'section' => 'content', 'match' => '/client-logos'],
             ['url' => '/admin/solutions.php', 'label' => 'Solutions', 'permission' => 'solutions.manage', 'section' => 'content', 'match' => '/solutions'],
             ['url' => '/admin/features.php', 'label' => 'Features', 'permission' => 'content.view', 'section' => 'content', 'match' => '/features'],
