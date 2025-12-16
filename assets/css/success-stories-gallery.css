@@ -1,0 +1,456 @@
+/**
+ * Success Stories Gallery Section - Horizontal Scroll on Sticky
+ * Full-width gallery with scroll-synced horizontal animation
+ * Similar to Industries Gallery on Solution Detail page
+ */
+
+/* Main Section - Extended height for scroll effect */
+.success-stories-gallery {
+    position: relative;
+    height: 250vh; /* Extended height for scroll-based horizontal movement */
+    background: transparent; /* Transparent so sticky wrapper shows through */
+}
+
+/* Sticky Wrapper - Sticks below header during scroll */
+.success-stories-sticky-wrapper {
+    position: sticky;
+    top: 64px; /* Account for header height */
+    height: 90vh; /* Fixed 90vh height */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--stories-bg-color, linear-gradient(135deg, #1a1a2e 0%, #16213e 100%));
+}
+
+/* Header Section */
+.success-stories-header {
+    padding: 2.5rem 0 1.5rem;
+    padding-left: 3rem;
+    text-align: left;
+    z-index: 2;
+}
+
+.success-stories-title {
+    font-size: 3.5rem;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    text-transform: none;
+    color: var(--stories-title-color, #ffffff);
+    margin: 0 0 0.5rem;
+    line-height: 1.1;
+}
+
+.success-stories-subtitle {
+    font-size: 1.125rem;
+    font-weight: 300;
+    color: var(--stories-subtitle-color, rgba(255, 255, 255, 0.7));
+    margin: 0;
+    max-width: 600px;
+}
+
+/* Scroll Container - Full width, no padding */
+.success-stories-scroll-container {
+    flex: 1;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+/* Track - Horizontal layout */
+.success-stories-track {
+    display: flex;
+    gap: 0;
+    will-change: transform;
+    transition: transform 0.1s linear;
+}
+
+/* Story Card - 4:3 ratio, no gaps */
+.success-story-card {
+    position: relative;
+    flex-shrink: 0;
+    width: 45vw; /* Larger cards - shows ~2.2 cards */
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Image */
+.success-story-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Black Shadow Overlay - Default state */
+.success-story-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        var(--stories-card-overlay, rgba(0, 0, 0, 0.3)) 0%,
+        var(--stories-card-overlay, rgba(0, 0, 0, 0.6)) 100%
+    );
+    transition: background 0.4s ease;
+    z-index: 1;
+}
+
+/* Content Container */
+.success-story-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 2.5rem;
+    z-index: 2;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Client Badge */
+.success-story-client {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--stories-card-badge-text, #ffffff);
+    background: var(--stories-card-badge-bg, rgba(255, 255, 255, 0.2));
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    margin-bottom: 0.75rem;
+    width: fit-content;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+/* Title - White, large by default */
+.success-story-title {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--stories-card-title, #ffffff);
+    margin: 0 0 0.5rem;
+    line-height: 1.2;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Industry Tag */
+.success-story-industry {
+    font-size: 0.875rem;
+    color: var(--stories-card-industry, rgba(255, 255, 255, 0.8));
+    margin: 0 0 0.5rem;
+    opacity: 1;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Description - Visible by default */
+.success-story-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--stories-card-desc, rgba(255, 255, 255, 0.9));
+    margin: 0;
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    max-width: 90%;
+}
+
+/* Read More Button - Glassy style, visible by default */
+.success-story-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: fit-content;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--stories-card-btn-text, #ffffff);
+    text-decoration: none;
+    background: var(--stories-card-btn-bg, rgba(255, 255, 255, 0.15));
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.success-story-btn svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+.success-story-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: #ffffff;
+}
+
+.success-story-btn:hover svg {
+    transform: translateX(3px);
+}
+
+/* Hover State */
+.success-story-card:hover .success-story-image {
+    transform: scale(1.05);
+}
+
+.success-story-card:hover .success-story-overlay {
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.5) 0%,
+        rgba(0, 0, 0, 0.8) 100%
+    );
+}
+
+.success-story-card:hover .success-story-title {
+    font-size: 1.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.success-story-card:hover .success-story-industry {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.success-story-card:hover .success-story-description {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.success-story-card:hover .success-story-btn {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* View All Button at the end */
+.success-stories-view-all {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 20vw;
+    min-width: 200px;
+    aspect-ratio: 4 / 3;
+    background: var(--stories-view-all-bg, rgba(255, 255, 255, 0.05));
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.success-stories-view-all-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: var(--stories-view-all-text, #ffffff);
+    padding: 2rem;
+    transition: all 0.3s ease;
+}
+
+.success-stories-view-all-link:hover {
+    transform: scale(1.05);
+}
+
+.success-stories-view-all-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--stories-view-all-icon-bg, rgba(255, 255, 255, 0.1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.success-stories-view-all-link:hover .success-stories-view-all-icon {
+    background: var(--stories-view-all-icon-hover-bg, rgba(255, 255, 255, 0.2));
+}
+
+.success-stories-view-all-icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.success-stories-view-all-text {
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .success-story-card {
+        width: 50vw; /* Shows ~2 cards on tablet */
+    }
+    
+    .success-stories-header {
+        padding-left: 2rem;
+    }
+    
+    .success-stories-title {
+        font-size: 2.75rem;
+    }
+    
+    .success-story-title {
+        font-size: 2rem;
+    }
+    
+    .success-story-card:hover .success-story-title {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .success-stories-gallery {
+        height: 200vh; /* Reduced scroll area on mobile */
+    }
+    
+    .success-stories-sticky-wrapper {
+        top: 56px; /* Smaller header on mobile */
+        height: 90vh;
+    }
+    
+    .success-stories-header {
+        padding: 1.5rem 1rem 1rem;
+        padding-left: 1.5rem;
+    }
+    
+    .success-stories-title {
+        font-size: 2rem;
+    }
+    
+    .success-stories-subtitle {
+        font-size: 1rem;
+    }
+    
+    .success-story-card {
+        width: 70vw; /* Shows ~1.4 cards on mobile */
+    }
+    
+    .success-story-content {
+        padding: 1.5rem;
+    }
+    
+    .success-story-title {
+        font-size: 1.5rem;
+    }
+    
+    .success-story-card:hover .success-story-title {
+        font-size: 1.25rem;
+    }
+    
+    .success-story-description {
+        font-size: 0.875rem;
+    }
+    
+    .success-story-btn {
+        padding: 0.4rem 0.875rem;
+        font-size: 0.75rem;
+    }
+    
+    .success-stories-view-all {
+        width: 40vw;
+        min-width: 150px;
+    }
+}
+
+@media (max-width: 480px) {
+    .success-story-card {
+        width: 85vw;
+    }
+    
+    .success-story-title {
+        font-size: 1.25rem;
+    }
+    
+    .success-story-card:hover .success-story-title {
+        font-size: 1.125rem;
+    }
+    
+    .success-stories-view-all {
+        width: 50vw;
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .success-stories-track {
+        transition: none;
+    }
+    
+    .success-story-card,
+    .success-story-image,
+    .success-story-overlay,
+    .success-story-content,
+    .success-story-title,
+    .success-story-description {
+        transition: none;
+    }
+}
+
+/* Focus state for keyboard navigation */
+.success-story-card:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.8);
+    outline-offset: -2px;
+}
+
+.success-story-card:focus .success-story-title {
+    font-size: 1.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.success-story-card:focus .success-story-industry {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.success-story-card:focus .success-story-description {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.success-story-card:focus .success-story-btn {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Keyboard active state */
+.success-story-card.keyboard-active .success-story-image {
+    transform: scale(1.05);
+}
+
+.success-story-card.keyboard-active .success-story-overlay {
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.5) 0%,
+        rgba(0, 0, 0, 0.8) 100%
+    );
+}
+
+.success-story-card.keyboard-active .success-story-title {
+    font-size: 1.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.success-story-card.keyboard-active .success-story-industry {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.success-story-card.keyboard-active .success-story-description {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.success-story-card.keyboard-active .success-story-btn {
+    opacity: 1;
+    transform: translateY(0);
+}

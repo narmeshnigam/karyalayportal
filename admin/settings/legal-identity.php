@@ -122,6 +122,7 @@ include_admin_header('Legal Identity Settings');
     <a href="<?php echo $base_url; ?>/admin/settings/branding.php" class="settings-nav-item">Branding</a>
     <a href="<?php echo $base_url; ?>/admin/settings/seo.php" class="settings-nav-item">SEO</a>
     <a href="<?php echo $base_url; ?>/admin/settings/legal-identity.php" class="settings-nav-item active">Legal Identity</a>
+    <a href="<?php echo $base_url; ?>/admin/settings/homepage-ui.php" class="settings-nav-item">Homepage UI</a>
 </div>
 
 <!-- Success/Error Messages -->
