@@ -289,7 +289,7 @@ try {
             "key": "<?php echo htmlspecialchars($razorpayKeyId); ?>",
             "amount": "<?php echo $paymentOrder['amount']; ?>",
             "currency": "<?php echo htmlspecialchars($paymentOrder['currency']); ?>",
-            "name": "<?php echo htmlspecialchars($config['name']); ?>",
+            "name": "<?php echo htmlspecialchars(get_brand_name()); ?>",
             "description": "<?php echo htmlspecialchars($plan['name']); ?>",
             "order_id": "<?php echo htmlspecialchars($paymentOrder['order_id']); ?>",
             "prefill": {

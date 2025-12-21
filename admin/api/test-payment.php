@@ -6,6 +6,7 @@
 
 require_once __DIR__ . '/../../config/bootstrap.php';
 require_once __DIR__ . '/../../includes/auth_helpers.php';
+require_once __DIR__ . '/../../includes/template_helpers.php';
 
 use Razorpay\Api\Api;
 use Razorpay\Api\Errors\SignatureVerificationError;
@@ -102,7 +103,8 @@ try {
                 'order_id' => $order['id'],
                 'amount' => $order['amount'],
                 'currency' => $order['currency'],
-                'key_id' => $keyId
+                'key_id' => $keyId,
+                'brand_name' => get_brand_name()
             ]);
             break;
             

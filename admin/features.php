@@ -107,7 +107,24 @@ try {
 
 // Include admin header
 include_admin_header('Features');
+
+// Get success/error messages from session
+$success_message = $_SESSION['admin_success'] ?? null;
+$error_message = $_SESSION['admin_error'] ?? null;
+unset($_SESSION['admin_success'], $_SESSION['admin_error']);
 ?>
+
+<?php if ($success_message): ?>
+    <div class="alert alert-success">
+        <?php echo htmlspecialchars($success_message); ?>
+    </div>
+<?php endif; ?>
+
+<?php if ($error_message): ?>
+    <div class="alert alert-error">
+        <?php echo htmlspecialchars($error_message); ?>
+    </div>
+<?php endif; ?>
 
 <div class="admin-page-header">
     <div class="admin-page-header-content">

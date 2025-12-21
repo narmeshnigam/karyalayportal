@@ -510,7 +510,7 @@ function processTestPayment() {
             key: data.key_id,
             amount: data.amount,
             currency: data.currency,
-            name: 'Payment Gateway Test',
+            name: data.brand_name || 'Payment Gateway Test',
             description: 'Test Payment - ₹1.00',
             order_id: data.order_id,
             handler: function(response) {
