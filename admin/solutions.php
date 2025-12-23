@@ -174,6 +174,7 @@ include_admin_header('Solutions');
                     <tr>
                         <th>Name</th>
                         <th>Slug</th>
+                        <th>Category</th>
                         <th>Status</th>
                         <th>Features</th>
                         <th>Display Order</th>
@@ -197,6 +198,20 @@ include_admin_header('Solutions');
                             </td>
                             <td>
                                 <code class="code-inline"><?php echo htmlspecialchars($solution['slug']); ?></code>
+                            </td>
+                            <td>
+                                <?php 
+                                $categoryLabels = [
+                                    'core' => 'Core Business',
+                                    'finance' => 'Finance',
+                                    'operations' => 'Operations',
+                                    'sales' => 'Sales',
+                                    'hr' => 'HR',
+                                    'analytics' => 'Analytics'
+                                ];
+                                $cat = $solution['category'] ?? 'core';
+                                echo htmlspecialchars($categoryLabels[$cat] ?? ucfirst($cat));
+                                ?>
                             </td>
                             <td><?php echo get_status_badge($solution['status']); ?></td>
                             <td>

@@ -20,7 +20,7 @@ class Solution
         'name', 'slug', 'description', 'tagline', 'subtitle', 'icon_image',
         'video_url', 'demo_video_url', 'color_theme', 'testimonial_id', 'pricing_note',
         'meta_title', 'meta_description', 'meta_keywords',
-        'display_order', 'status', 'featured_on_homepage'
+        'display_order', 'category', 'status', 'featured_on_homepage'
     ];
 
     private array $stylingFields = [
@@ -101,12 +101,12 @@ class Solution
             id, name, slug, description, tagline, subtitle, icon_image,
             video_url, demo_video_url, color_theme, testimonial_id, pricing_note,
             meta_title, meta_description, meta_keywords,
-            display_order, status, featured_on_homepage
+            display_order, category, status, featured_on_homepage
         ) VALUES (
             :id, :name, :slug, :description, :tagline, :subtitle, :icon_image,
             :video_url, :demo_video_url, :color_theme, :testimonial_id, :pricing_note,
             :meta_title, :meta_description, :meta_keywords,
-            :display_order, :status, :featured_on_homepage
+            :display_order, :category, :status, :featured_on_homepage
         )";
 
         $stmt = $this->db->prepare($sql);
@@ -127,6 +127,7 @@ class Solution
             ':meta_description' => $data['meta_description'] ?? null,
             ':meta_keywords' => $data['meta_keywords'] ?? null,
             ':display_order' => $data['display_order'] ?? 0,
+            ':category' => $data['category'] ?? 'core',
             ':status' => $data['status'] ?? 'DRAFT',
             ':featured_on_homepage' => $data['featured_on_homepage'] ?? false
         ]);

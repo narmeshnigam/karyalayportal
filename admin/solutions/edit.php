@@ -132,6 +132,7 @@ $form_data = [
     'meta_description' => $solution['meta_description'] ?? '',
     'meta_keywords' => $solution['meta_keywords'] ?? '',
     'display_order' => $solution['display_order'] ?? 0,
+    'category' => $solution['category'] ?? 'core',
     'status' => $solution['status'] ?? 'DRAFT',
     'featured_on_homepage' => $solution['featured_on_homepage'] ?? false
 ];
@@ -175,6 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $form_data['meta_description'] = sanitizeString($_POST['meta_description'] ?? '');
         $form_data['meta_keywords'] = sanitizeString($_POST['meta_keywords'] ?? '');
         $form_data['display_order'] = sanitizeInt($_POST['display_order'] ?? 0);
+        $form_data['category'] = sanitizeString($_POST['category'] ?? 'core');
         $form_data['status'] = sanitizeString($_POST['status'] ?? 'DRAFT');
         $form_data['featured_on_homepage'] = isset($_POST['featured_on_homepage']) ? true : false;
         
@@ -468,6 +470,21 @@ include_admin_header('Edit Solution');
                         <p class="form-help">Lower numbers appear first</p>
                     </div>
                     
+                    <div class="form-group">
+                        <label for="category" class="form-label">Category</label>
+                        <select id="category" name="category" class="form-select">
+                            <option value="core" <?php echo ($form_data['category'] ?? 'core') === 'core' ? 'selected' : ''; ?>>Core Business Solutions</option>
+                            <option value="finance" <?php echo ($form_data['category'] ?? '') === 'finance' ? 'selected' : ''; ?>>Finance & Accounting</option>
+                            <option value="operations" <?php echo ($form_data['category'] ?? '') === 'operations' ? 'selected' : ''; ?>>Operations & Logistics</option>
+                            <option value="sales" <?php echo ($form_data['category'] ?? '') === 'sales' ? 'selected' : ''; ?>>Sales & Marketing</option>
+                            <option value="hr" <?php echo ($form_data['category'] ?? '') === 'hr' ? 'selected' : ''; ?>>Human Resources</option>
+                            <option value="analytics" <?php echo ($form_data['category'] ?? '') === 'analytics' ? 'selected' : ''; ?>>Analytics & Reporting</option>
+                        </select>
+                        <p class="form-help">Category for grouping on the solutions list page</p>
+                    </div>
+                </div>
+                
+                <div class="form-row">
                     <div class="form-group">
                         <label for="status" class="form-label required">Status</label>
                         <select id="status" name="status" class="form-select" required>
