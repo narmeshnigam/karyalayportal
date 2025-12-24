@@ -11,7 +11,8 @@ class InputSanitizationService
 {
     /**
      * Sanitize string input for XSS prevention
-     * Removes HTML tags and encodes special characters
+     * Removes HTML tags but preserves special characters like &
+     * HTML encoding should be done at display time, not storage time
      * 
      * @param string|null $input The input to sanitize
      * @return string The sanitized input
@@ -31,8 +32,8 @@ class InputSanitizationService
         // Remove data: protocol
         $sanitized = preg_replace('/data:/i', '', $sanitized);
         
-        // Encode special characters (but don't double-encode)
-        $sanitized = htmlspecialchars($sanitized, ENT_QUOTES | ENT_HTML5, 'UTF-8', false);
+        // Trim whitespace
+        $sanitized = trim($sanitized);
         
         return $sanitized;
     }

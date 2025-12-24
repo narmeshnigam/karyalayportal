@@ -143,7 +143,7 @@ include_header($page_title, $page_description);
                     <h2 class="csdetail-section-title">The Challenge</h2>
                 </div>
                 <div class="csdetail-section-body">
-                    <?php echo $caseStudy['challenge']; ?>
+                    <?php echo nl2br(htmlspecialchars($caseStudy['challenge'])); ?>
                 </div>
             </div>
 
@@ -158,7 +158,7 @@ include_header($page_title, $page_description);
                     <h2 class="csdetail-section-title">The Solution</h2>
                 </div>
                 <div class="csdetail-section-body">
-                    <?php echo $caseStudy['solution']; ?>
+                    <?php echo nl2br(htmlspecialchars($caseStudy['solution'])); ?>
                     
                     <?php if (!empty($caseStudy['modules_used']) && is_array($caseStudy['modules_used'])): ?>
                         <div class="csdetail-modules">
@@ -184,7 +184,7 @@ include_header($page_title, $page_description);
                     <h2 class="csdetail-section-title">The Results</h2>
                 </div>
                 <div class="csdetail-section-body">
-                    <?php echo $caseStudy['results']; ?>
+                    <?php echo nl2br(htmlspecialchars($caseStudy['results'])); ?>
                 </div>
             </div>
         </div>

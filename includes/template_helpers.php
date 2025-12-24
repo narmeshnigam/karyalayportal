@@ -318,6 +318,22 @@ function esc_html($text) {
 }
 
 /**
+ * Fix double-encoded HTML entities
+ * Useful for content that was previously encoded on save and then encoded again on display
+ * 
+ * @param string $text Text that might have double-encoded entities
+ * @return string Text with entities decoded once
+ */
+function fix_double_encoded($text) {
+    if (empty($text)) {
+        return $text;
+    }
+    // Decode HTML entities once to fix double-encoding
+    // e.g., &amp;amp; becomes &amp;, &amp; becomes &
+    return html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+}
+
+/**
  * Sanitize output for HTML attribute
  * 
  * @param string $text Text to sanitize
