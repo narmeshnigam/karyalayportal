@@ -28,8 +28,11 @@ $app_base_url = get_app_base_url();
             <link rel="stylesheet" href="<?php echo htmlspecialchars($css_file); ?>">
         <?php endforeach; ?>
     <?php endif; ?>
+    
+    <?php echo render_analytics_head(); ?>
 </head>
 <body>
+    <?php echo render_analytics_body(); ?>
     <div class="page-wrapper">
         <header class="site-header" role="banner">
             <div class="header-container">

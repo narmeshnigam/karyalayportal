@@ -86,20 +86,20 @@ WHERE setting_value LIKE '%&amp;%';
 
 -- Fix testimonials table
 UPDATE testimonials 
-SET content = REPLACE(content, '&amp;', '&')
-WHERE content LIKE '%&amp;%';
+SET testimonial_text = REPLACE(testimonial_text, '&amp;', '&')
+WHERE testimonial_text LIKE '%&amp;%';
 
 UPDATE testimonials 
-SET author_name = REPLACE(author_name, '&amp;', '&')
-WHERE author_name LIKE '%&amp;%';
+SET customer_name = REPLACE(customer_name, '&amp;', '&')
+WHERE customer_name LIKE '%&amp;%';
 
 UPDATE testimonials 
-SET author_title = REPLACE(author_title, '&amp;', '&')
-WHERE author_title LIKE '%&amp;%';
+SET customer_title = REPLACE(customer_title, '&amp;', '&')
+WHERE customer_title LIKE '%&amp;%';
 
 UPDATE testimonials 
-SET company_name = REPLACE(company_name, '&amp;', '&')
-WHERE company_name LIKE '%&amp;%';
+SET customer_company = REPLACE(customer_company, '&amp;', '&')
+WHERE customer_company LIKE '%&amp;%';
 
 -- Fix why_choose_cards table
 UPDATE why_choose_cards 
@@ -118,6 +118,19 @@ WHERE question LIKE '%&amp;%';
 UPDATE faqs 
 SET answer = REPLACE(answer, '&amp;', '&')
 WHERE answer LIKE '%&amp;%';
+
+-- Fix blog_posts table
+UPDATE blog_posts 
+SET title = REPLACE(title, '&amp;', '&')
+WHERE title LIKE '%&amp;%';
+
+UPDATE blog_posts 
+SET excerpt = REPLACE(excerpt, '&amp;', '&')
+WHERE excerpt LIKE '%&amp;%';
+
+UPDATE blog_posts 
+SET content = REPLACE(content, '&amp;', '&')
+WHERE content LIKE '%&amp;%';
 
 -- Also fix other common HTML entities that might have been double-encoded
 -- Fix &lt; (less than)
@@ -139,3 +152,20 @@ UPDATE case_studies SET results = REPLACE(results, '&quot;', '"') WHERE results 
 UPDATE case_studies SET challenge = REPLACE(challenge, '&#039;', "'") WHERE challenge LIKE '%&#039;%';
 UPDATE case_studies SET solution = REPLACE(solution, '&#039;', "'") WHERE solution LIKE '%&#039;%';
 UPDATE case_studies SET results = REPLACE(results, '&#039;', "'") WHERE results LIKE '%&#039;%';
+
+
+-- Fix blog_posts for other HTML entities
+UPDATE blog_posts SET title = REPLACE(title, '&lt;', '<') WHERE title LIKE '%&lt;%';
+UPDATE blog_posts SET title = REPLACE(title, '&gt;', '>') WHERE title LIKE '%&gt;%';
+UPDATE blog_posts SET title = REPLACE(title, '&quot;', '"') WHERE title LIKE '%&quot;%';
+UPDATE blog_posts SET title = REPLACE(title, '&#039;', "'") WHERE title LIKE '%&#039;%';
+
+UPDATE blog_posts SET excerpt = REPLACE(excerpt, '&lt;', '<') WHERE excerpt LIKE '%&lt;%';
+UPDATE blog_posts SET excerpt = REPLACE(excerpt, '&gt;', '>') WHERE excerpt LIKE '%&gt;%';
+UPDATE blog_posts SET excerpt = REPLACE(excerpt, '&quot;', '"') WHERE excerpt LIKE '%&quot;%';
+UPDATE blog_posts SET excerpt = REPLACE(excerpt, '&#039;', "'") WHERE excerpt LIKE '%&#039;%';
+
+UPDATE blog_posts SET content = REPLACE(content, '&lt;', '<') WHERE content LIKE '%&lt;%';
+UPDATE blog_posts SET content = REPLACE(content, '&gt;', '>') WHERE content LIKE '%&gt;%';
+UPDATE blog_posts SET content = REPLACE(content, '&quot;', '"') WHERE content LIKE '%&quot;%';
+UPDATE blog_posts SET content = REPLACE(content, '&#039;', "'") WHERE content LIKE '%&#039;%';

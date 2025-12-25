@@ -1639,3 +1639,246 @@ function get_footer_copyright_line(): string
     
     return "&copy; {$year} {$brandName}. {$copyrightText}";
 }
+
+/**
+ * Get social media links from settings
+ * 
+ * @return array Social links (facebook, twitter, linkedin, instagram, youtube)
+ */
+function get_social_links(): array
+{
+    static $socialLinks = null;
+    static $fetched = false;
+    
+    if ($fetched) {
+        return $socialLinks ?? [];
+    }
+    
+    $fetched = true;
+    $socialLinks = [];
+    
+    try {
+        if (!class_exists('\Karyalay\Database\Connection')) {
+            return $socialLinks;
+        }
+        
+        require_once __DIR__ . '/../classes/Models/Setting.php';
+        
+        $settingModel = new \Karyalay\Models\Setting();
+        $settings = $settingModel->getMultiple([
+            'social_facebook',
+            'social_twitter',
+            'social_linkedin',
+            'social_instagram',
+            'social_youtube'
+        ]);
+        
+        $socialLinks = [
+            'facebook' => $settings['social_facebook'] ?? '',
+            'twitter' => $settings['social_twitter'] ?? '',
+            'linkedin' => $settings['social_linkedin'] ?? '',
+            'instagram' => $settings['social_instagram'] ?? '',
+            'youtube' => $settings['social_youtube'] ?? ''
+        ];
+        
+        // Filter out empty values for the check in footer
+        $socialLinks = array_filter($socialLinks, function($url) {
+            return !empty(trim($url));
+        });
+        
+    } catch (Exception $e) {
+        error_log('Error fetching social links: ' . $e->getMessage());
+    }
+    
+    return $socialLinks;
+}
+
+
+/**
+ * Get analytics settings from database
+ * Uses static caching to avoid multiple database queries per request
+ * 
+ * @return array Analytics settings
+ */
+function get_analytics_settings(): array
+{
+    static $settings = null;
+    static $fetched = false;
+    
+    if ($fetched) {
+        return $settings ?? [];
+    }
+    
+    $fetched = true;
+    $settings = [];
+    
+    try {
+        if (!class_exists('\Karyalay\Database\Connection')) {
+            return $settings;
+        }
+        
+        require_once __DIR__ . '/../classes/Models/Setting.php';
+        
+        $settingModel = new \Karyalay\Models\Setting();
+        $settings = $settingModel->getMultiple([
+            'ga4_measurement_id',
+            'ga4_enabled',
+            'gsc_verification_code',
+            'gsc_enabled',
+            'gtm_container_id',
+            'gtm_enabled',
+            'meta_pixel_id',
+            'meta_pixel_enabled',
+            'clarity_project_id',
+            'clarity_enabled'
+        ]);
+    } catch (\Exception $e) {
+        error_log("Error retrieving analytics settings: " . $e->getMessage());
+    } catch (\Throwable $e) {
+        error_log("Fatal error retrieving analytics settings: " . $e->getMessage());
+    }
+    
+    return $settings;
+}
+
+/**
+ * Render analytics head scripts (to be placed in <head>)
+ * Includes: Google Search Console verification, GTM head script, GA4
+ * 
+ * @return string HTML/JavaScript for head section
+ */
+function render_analytics_head(): string
+{
+    $settings = get_analytics_settings();
+    $output = '';
+    
+    // Google Search Console verification meta tag
+    if (($settings['gsc_enabled'] ?? '0') === '1' && !empty($settings['gsc_verification_code'])) {
+        $code = $settings['gsc_verification_code'];
+        // If it's just the code, wrap it in the meta tag format
+        if (strpos($code, 'google-site-verification=') === false) {
+            $code = 'google-site-verification=' . $code;
+        }
+        // Extract just the content value if full meta tag was provided
+        if (preg_match('/content=["\']([^"\']+)["\']/', $code, $matches)) {
+            $code = $matches[1];
+        }
+        $output .= '    <meta name="google-site-verification" content="' . esc_attr($code) . '">' . "\n";
+    }
+    
+    // Google Tag Manager (head script)
+    if (($settings['gtm_enabled'] ?? '0') === '1' && !empty($settings['gtm_container_id'])) {
+        $gtmId = esc_attr($settings['gtm_container_id']);
+        $output .= <<<GTM
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','{$gtmId}');</script>
+    <!-- End Google Tag Manager -->
+
+GTM;
+    }
+    
+    // Google Analytics GA4 (only if GTM is not enabled, as GA4 can be managed via GTM)
+    if (($settings['ga4_enabled'] ?? '0') === '1' && !empty($settings['ga4_measurement_id'])) {
+        $ga4Id = esc_attr($settings['ga4_measurement_id']);
+        $output .= <<<GA4
+    <!-- Google Analytics GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={$ga4Id}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '{$ga4Id}');
+    </script>
+    <!-- End Google Analytics GA4 -->
+
+GA4;
+    }
+    
+    // Meta Pixel (Facebook)
+    if (($settings['meta_pixel_enabled'] ?? '0') === '1' && !empty($settings['meta_pixel_id'])) {
+        $pixelId = esc_attr($settings['meta_pixel_id']);
+        $output .= <<<META
+    <!-- Meta Pixel Code -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '{$pixelId}');
+        fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id={$pixelId}&ev=PageView&noscript=1"/></noscript>
+    <!-- End Meta Pixel Code -->
+
+META;
+    }
+    
+    // Microsoft Clarity
+    if (($settings['clarity_enabled'] ?? '0') === '1' && !empty($settings['clarity_project_id'])) {
+        $clarityId = esc_attr($settings['clarity_project_id']);
+        $output .= <<<CLARITY
+    <!-- Microsoft Clarity -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "{$clarityId}");
+    </script>
+    <!-- End Microsoft Clarity -->
+
+CLARITY;
+    }
+    
+    return $output;
+}
+
+/**
+ * Render analytics body scripts (to be placed right after <body> tag)
+ * Includes: GTM noscript fallback
+ * 
+ * @return string HTML for body section
+ */
+function render_analytics_body(): string
+{
+    $settings = get_analytics_settings();
+    $output = '';
+    
+    // Google Tag Manager (noscript fallback)
+    if (($settings['gtm_enabled'] ?? '0') === '1' && !empty($settings['gtm_container_id'])) {
+        $gtmId = esc_attr($settings['gtm_container_id']);
+        $output .= <<<GTM
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id={$gtmId}"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+GTM;
+    }
+    
+    return $output;
+}
+
+/**
+ * Check if any analytics tracking is enabled
+ * 
+ * @return bool True if at least one analytics service is enabled
+ */
+function has_analytics_enabled(): bool
+{
+    $settings = get_analytics_settings();
+    
+    return (($settings['ga4_enabled'] ?? '0') === '1' && !empty($settings['ga4_measurement_id']))
+        || (($settings['gtm_enabled'] ?? '0') === '1' && !empty($settings['gtm_container_id']))
+        || (($settings['meta_pixel_enabled'] ?? '0') === '1' && !empty($settings['meta_pixel_id']))
+        || (($settings['clarity_enabled'] ?? '0') === '1' && !empty($settings['clarity_project_id']));
+}

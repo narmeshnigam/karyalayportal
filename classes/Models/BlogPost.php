@@ -32,9 +32,9 @@ class BlogPost
             $id = $this->generateUuid();
 
             $sql = "INSERT INTO blog_posts (
-                id, title, slug, content, excerpt, author_id, tags, status, is_featured, published_at
+                id, title, slug, content, excerpt, featured_image, author_id, tags, status, is_featured, published_at
             ) VALUES (
-                :id, :title, :slug, :content, :excerpt, :author_id, :tags, :status, :is_featured, :published_at
+                :id, :title, :slug, :content, :excerpt, :featured_image, :author_id, :tags, :status, :is_featured, :published_at
             )";
 
             $stmt = $this->db->prepare($sql);
@@ -44,6 +44,7 @@ class BlogPost
                 ':slug' => $data['slug'],
                 ':content' => $data['content'],
                 ':excerpt' => $data['excerpt'] ?? null,
+                ':featured_image' => $data['featured_image'] ?? null,
                 ':author_id' => $data['author_id'],
                 ':tags' => isset($data['tags']) ? json_encode($data['tags']) : null,
                 ':status' => $data['status'] ?? 'DRAFT',
@@ -152,7 +153,7 @@ class BlogPost
     public function update(string $id, array $data): bool
     {
         try {
-            $allowedFields = ['title', 'slug', 'content', 'excerpt', 'author_id', 'tags', 'status', 'is_featured', 'published_at'];
+            $allowedFields = ['title', 'slug', 'content', 'excerpt', 'featured_image', 'author_id', 'tags', 'status', 'is_featured', 'published_at'];
             $updateFields = [];
             $params = [':id' => $id];
 

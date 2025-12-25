@@ -58,8 +58,11 @@ if (strpos($request_uri, '/app/dashboard') !== false) {
             <link rel="stylesheet" href="<?php echo htmlspecialchars($css_file); ?>">
         <?php endforeach; ?>
     <?php endif; ?>
+    
+    <?php echo render_analytics_head(); ?>
 </head>
 <body class="customer-portal-body">
+    <?php echo render_analytics_body(); ?>
     <div class="customer-portal-wrapper">
         <!-- Customer Portal Sidebar -->
         <aside class="customer-portal-sidebar" role="navigation" aria-label="Customer Portal Navigation">
